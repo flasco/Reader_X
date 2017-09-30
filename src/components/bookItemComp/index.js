@@ -13,7 +13,7 @@ class BookItem extends Component{
     render() {
         return (
             <TouchableOpacity
-                onPress={() => {  }}>
+                onPress={this.props.onPress}>
                 <View style={{
                     height: 90,
                     flexDirection: 'row',

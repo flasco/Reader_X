@@ -28,5 +28,9 @@ export default {
   HeaderHint : {
     fontSize: 14,
     color: '#555555'
+  },
+  IconStyle:{
+    marginLeft:0,
+    marginRight: -5,
   }
 };

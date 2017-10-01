@@ -116,21 +116,16 @@ class ShelfScreen extends Component {
 
   renderFooter() {
     return (
-      <View style={{ width: 170, alignItems: 'center', }}>
+      <View style={{ alignItems: 'center',marginTop:14, }}>
         <Button
           containerViewStyle={{ height: 10 }}
           backgroundColor='#F9F9F9'
           borderRadius={22}
-          buttonStyle={{ borderWidth: 1, borderColor: 'red' }}
+          buttonStyle={{ borderWidth: 1, borderColor: 'red',height:10,width: 86, }}
           color='red'
-          title='浏览记录 >'
-          /* iconComponent={<Icon
-                  name='chevron-right'
-                  />} */
-          iconLeft={{
-            name: 'chevron-right',
-            color: 'red'
-          }}
+          title='浏览记录'
+          fontSize={12}
+          rightIcon={{name: 'chevron-right',color: 'red',style: styles.test.IconStyle}}
         />
       </View>
     );

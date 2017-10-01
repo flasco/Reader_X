@@ -26,7 +26,7 @@ export default {
     fontSize: 12,
     color: '#999999'
   },
-  HeaderHint:{
+  HeaderHint: {
     fontSize: 14,
     color: '#555555'
   }

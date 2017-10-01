@@ -2,10 +2,7 @@ export default {
     BlackTheme: {
         backgroundColor: '#000',
     },
-    RedTheme:{
+    RedTheme: {
         backgroundColor: '#D70016',
     },
-
-
-
 }

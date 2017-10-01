@@ -1,5 +1,5 @@
 import {
-    StackNavigator
+  StackNavigator
 } from 'react-navigation';
 
 import bookListScreen from './bookListScreen';
@@ -7,14 +7,14 @@ import bookListScreen from './bookListScreen';
 
 
 const TopNavigator = StackNavigator({
-    Home: {
-        screen: bookListScreen
-    },
+  Home: {
+    screen: bookListScreen
+  },
 }, {
     mode: 'modal',
     navigationOptions: {
-        gesturesEnabled: false
+      gesturesEnabled: false
     }
-});
+  });
 
 export default TopNavigator;

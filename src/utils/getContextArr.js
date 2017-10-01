@@ -16,7 +16,7 @@ export default function getContextArr(testT, width) {
     for (; i < size; i++) {
       testa[pag] += lines[i] + '\n';
     }
-    if (size == lines.length) 
+    if (size == lines.length)
       break;
   }
   totalPage = pag + 1;
@@ -25,7 +25,7 @@ export default function getContextArr(testT, width) {
 }
 
 function parseContent(str, width, cleanEmptyLine = true) {
-  if (!str || str == '' || typeof(str) != 'string') {
+  if (!str || str == '' || typeof (str) != 'string') {
     return [];
   }
   str = cleanContent(str);
@@ -48,12 +48,12 @@ function parseContent(str, width, cleanEmptyLine = true) {
         currentLineWidth = 0;
         continue;
       }
-      if(code == 8220 ||code == 8221){
+      if (code == 8220 || code == 8221) {
         s = `"`;
-      }else if(code == 8216 || code == 8217){
+      } else if (code == 8216 || code == 8217) {
         s = `'`;
       }
-      
+
       var sWidth = stringWidth(s);
       if (currentLineWidth + sWidth > width) {
         lines.push(currentLine);

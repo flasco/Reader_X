@@ -1,4 +1,4 @@
-import { test,theme,width } from '../../theme';
+import { test, theme, width } from '../../theme';
 
 export default {
   test,

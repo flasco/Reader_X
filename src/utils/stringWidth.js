@@ -31,7 +31,7 @@ module.exports = str => {
 };
 
 let stringWidthMap = {
-  32:0.5,
-  8212:2,
-  8230:2,
+  32: 0.5,
+  8212: 2,
+  8230: 2,
 };

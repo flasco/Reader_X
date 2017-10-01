@@ -1,5 +1,5 @@
 import React, { PureComponent, PropTypes } from 'react'
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native'
+import { FlatList } from 'react-native'
 
 export const RefreshState = {
   Idle: 0,
@@ -11,27 +11,26 @@ export const RefreshState = {
 const DEBUG = false
 const log = (text) => { DEBUG && console.log(text) }
 
-class RefreshListView extends PureComponent {
+class RefreshFlatList extends PureComponent {
   componentWillReceiveProps(nextProps) {
-    log('[RefreshListView]  RefreshListView componentWillReceiveProps ' + nextProps.refreshState)
+    log('[RefreshFlatList]  RefreshFlatList componentWillReceiveProps ' + nextProps.refreshState)
   }
 
   componentDidUpdate(prevProps, prevState) {
-    log('[RefreshListView]  RefreshListView componentDidUpdate ' + prevProps.refreshState)
+    log('[RefreshFlatList]  RefreshFlatList componentDidUpdate ' + prevProps.refreshState)
   }
 
   onHeaderRefresh = () => {
-    log('[RefreshListView]  onHeaderRefresh')
+    log('[RefreshFlatList]  onHeaderRefresh')
 
     if (this.shouldStartHeaderRefreshing()) {
-      log('[RefreshListView]  onHeaderRefresh')
+      log('[RefreshFlatList]  onHeaderRefresh')
       this.props.onHeaderRefresh(RefreshState.HeaderRefreshing)
     }
   }
 
-
   shouldStartHeaderRefreshing = () => {
-    log('[RefreshListView]  shouldStartHeaderRefreshing')
+    log('[RefreshFlatList]  shouldStartHeaderRefreshing')
 
     if (this.props.refreshState == RefreshState.HeaderRefreshing) {
       return false
@@ -41,7 +40,7 @@ class RefreshListView extends PureComponent {
   }
 
   render() {
-    log('[RefreshListView]  render')
+    log('[RefreshFlatList]  render')
 
     return (
       <FlatList
@@ -55,7 +54,7 @@ class RefreshListView extends PureComponent {
 
 }
 
-RefreshListView.propTypes = {
+RefreshFlatList.propTypes = {
   refreshState: PropTypes.arrayOf(Object.values(RefreshState)).isRequired,
   onHeaderRefresh: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
@@ -63,8 +62,8 @@ RefreshListView.propTypes = {
   listRef: PropTypes.string,
 }
 
-RefreshListView.defaultProps = {
+RefreshFlatList.defaultProps = {
   onHeaderRefresh: () => {},
 }
 
-export default RefreshListView;
+export default RefreshFlatList;

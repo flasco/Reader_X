@@ -6,7 +6,7 @@ import {
   Image,
 } from 'react-native';
 
-import styles from './index.style'
+import styles from './index.style';
 
 
 class BookItem extends Component {

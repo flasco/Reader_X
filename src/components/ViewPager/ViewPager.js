@@ -58,9 +58,9 @@ var ViewPager = React.createClass({
             toValue: toValue,
             friction: 10,
             tension: 50,
-          })
+          });
       },
-    }
+    };
   },
 
   getInitialState() {
@@ -80,8 +80,8 @@ var ViewPager = React.createClass({
     this.maxP = this.props.dataSource.getPageCount();
     var release = (e, gestureState) => {
       var relativeGestureDistance = gestureState.dx / deviceWidth,
-          //lastPageIndex = this.props.children.length - 1,
-          vx = gestureState.vx;
+        //lastPageIndex = this.props.children.length - 1,
+        vx = gestureState.vx;
 
       var step = 0;
       if (relativeGestureDistance < -0.5 || (relativeGestureDistance < 0 && vx <= -1e-6)) {
@@ -104,14 +104,14 @@ var ViewPager = React.createClass({
           return ;
         });
       }else if( clickX>90 && clickX<280 && moveX ==0){
-         this.props.clickBoard();
-         return ;
+        this.props.clickBoard();
+        return ;
       }
 
       this.props.hasTouch && this.props.hasTouch(false);
 
       this.movePage(step, gestureState);
-    }
+    };
 
     this._panResponder = PanResponder.create({
       // Claim responder if it's a horizontal pan
@@ -123,7 +123,7 @@ var ViewPager = React.createClass({
         if (Math.abs(gestureState.dx) > Math.abs(gestureState.dy)) {
           if (/* (gestureState.moveX <= this.props.edgeHitWidth ||
               gestureState.moveX >= deviceWidth - this.props.edgeHitWidth) && */
-                this.props.locked !== true && !this.fling) {
+            this.props.locked !== true && !this.fling) {
             this.props.hasTouch && this.props.hasTouch(true);
             return true;
           }
@@ -132,7 +132,7 @@ var ViewPager = React.createClass({
 
 
       // Touch is released, scroll to the one that you're closest to
-       onPanResponderRelease: release,
+      onPanResponderRelease: release,
       
       onPanResponderTerminate: release,
 
@@ -149,11 +149,11 @@ var ViewPager = React.createClass({
       this.state.scrollValue.setValue(1);
     }
     // if(initf === 0){
-      var initialPage = Number(this.props.initialPage);
-      // initf = 1;
-        if (initialPage > 0) {
-          this.goToPage(initialPage, false);
-        }
+    var initialPage = Number(this.props.initialPage);
+    // initf = 1;
+    if (initialPage > 0) {
+      this.goToPage(initialPage, false);
+    }
     // }
   },
 
@@ -161,11 +161,11 @@ var ViewPager = React.createClass({
     // console.log(this.props.dataSource);
     //私人修改
     // console.log('nextProps.Gpag:'+this.props.Gpag);
-      if(this.props.Gpag==1){
-        this.goToPage(0, false);
-      }else if(this.props.Gpag==-1){
-        this.goToPage(this.maxP-1, false)
-      }
+    if(this.props.Gpag==1){
+      this.goToPage(0, false);
+    }else if(this.props.Gpag==-1){
+      this.goToPage(this.maxP-1, false);
+    }
   },
 
 
@@ -222,7 +222,7 @@ var ViewPager = React.createClass({
     // console.log('pageNumber:'+pageNumber+'    pageCount:'+pageCount);
     if (pageNumber < 0 || pageNumber > pageCount) {
       // console.error('Invalid page number: ', pageNumber);
-      return
+      return;
     }
 
     var step = pageNumber - this.state.currentPage;
@@ -246,7 +246,7 @@ var ViewPager = React.createClass({
       // console.log(pageNumber)
       return;
     }else if(pageNumber<0&&this.state.toprev==1){
-        this.props.getPrevPage();
+      this.props.getPrevPage();
       return ;
     }
     step!==0?this.props.getCurrentPage(pageNumber+1):false;
@@ -368,17 +368,17 @@ var ViewPager = React.createClass({
     return (
       <View style={{flex: 1}}
         onLayout={(event) => {
-            // console.log('ViewPager.onLayout()');
-            var viewWidth = event.nativeEvent.layout.width;
-            if (!viewWidth || this.state.viewWidth === viewWidth) {
-              return;
-            }
-            this.setState({
-              currentPage: this.state.currentPage,
-              viewWidth: viewWidth,
-            });
-          }}
-        >
+          // console.log('ViewPager.onLayout()');
+          var viewWidth = event.nativeEvent.layout.width;
+          if (!viewWidth || this.state.viewWidth === viewWidth) {
+            return;
+          }
+          this.setState({
+            currentPage: this.state.currentPage,
+            viewWidth: viewWidth,
+          });
+        }}
+      >
 
         <Animated.View style={[sceneContainerStyle, {transform: [{translateX}]}]}
           {...this._panResponder.panHandlers}>
@@ -386,11 +386,11 @@ var ViewPager = React.createClass({
         </Animated.View>
 
         {this.renderPageIndicator({goToPage: this.goToPage,
-                            pageCount: pageIDs.length,
-                            activePage: this.state.currentPage,
-                            scrollValue: this.state.scrollValue,
-                            scrollOffset: this.childIndex,
-                          })}
+          pageCount: pageIDs.length,
+          activePage: this.state.currentPage,
+          scrollValue: this.state.scrollValue,
+          scrollOffset: this.childIndex,
+        })}
       </View>
     );
   }

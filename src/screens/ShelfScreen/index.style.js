@@ -4,4 +4,4 @@ export default {
   test,
   theme,
   width
-}
+};

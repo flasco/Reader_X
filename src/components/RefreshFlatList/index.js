@@ -1,46 +1,46 @@
-import React, { PureComponent, PropTypes } from 'react'
-import { FlatList } from 'react-native'
+import React, { PureComponent, PropTypes } from 'react';
+import { FlatList } from 'react-native';
 
 export const RefreshState = {
   Idle: 0,
   HeaderRefreshing: 1,
   NoMoreData: 3,
   Failure: 4,
-}
+};
 
-const DEBUG = false
-const log = (text) => { DEBUG && console.log(text) }
+const DEBUG = false;
+const log = (text) => { DEBUG && console.log(text); };
 
 class RefreshFlatList extends PureComponent {
   componentWillReceiveProps(nextProps) {
-    log('[RefreshFlatList]  RefreshFlatList componentWillReceiveProps ' + nextProps.refreshState)
+    log('[RefreshFlatList]  RefreshFlatList componentWillReceiveProps ' + nextProps.refreshState);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    log('[RefreshFlatList]  RefreshFlatList componentDidUpdate ' + prevProps.refreshState)
+    log('[RefreshFlatList]  RefreshFlatList componentDidUpdate ' + prevProps.refreshState);
   }
 
   onHeaderRefresh = () => {
-    log('[RefreshFlatList]  onHeaderRefresh')
+    log('[RefreshFlatList]  onHeaderRefresh');
 
     if (this.shouldStartHeaderRefreshing()) {
-      log('[RefreshFlatList]  onHeaderRefresh')
-      this.props.onHeaderRefresh(RefreshState.HeaderRefreshing)
+      log('[RefreshFlatList]  onHeaderRefresh');
+      this.props.onHeaderRefresh(RefreshState.HeaderRefreshing);
     }
   }
 
   shouldStartHeaderRefreshing = () => {
-    log('[RefreshFlatList]  shouldStartHeaderRefreshing')
+    log('[RefreshFlatList]  shouldStartHeaderRefreshing');
 
     if (this.props.refreshState == RefreshState.HeaderRefreshing) {
-      return false
+      return false;
     }
 
-    return true
+    return true;
   }
 
   render() {
-    log('[RefreshFlatList]  render')
+    log('[RefreshFlatList]  render');
 
     return (
       <FlatList
@@ -49,7 +49,7 @@ class RefreshFlatList extends PureComponent {
         refreshing={this.props.refreshState == RefreshState.HeaderRefreshing}
         {...this.props}
       />
-    )
+    );
   }
 
 }
@@ -60,10 +60,10 @@ RefreshFlatList.propTypes = {
   data: PropTypes.array.isRequired,
 
   listRef: PropTypes.string,
-}
+};
 
 RefreshFlatList.defaultProps = {
   onHeaderRefresh: () => {},
-}
+};
 
 export default RefreshFlatList;

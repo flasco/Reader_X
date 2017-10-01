@@ -46,7 +46,7 @@ class ShelfScreen extends Component {
   };
   constructor(props) {
     super(props);
-
+    
     this.state = {
       booklist: [],
       loadingFlag: true,

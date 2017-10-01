@@ -103,7 +103,7 @@ class ViewPagerDataSource {
     for (var sIndex = 0; sIndex < this.pageIdentities.length; sIndex++) {
       var pageID = this.pageIdentities[sIndex];
       dirty = !prevPagesHash[pageID];
-      var pageHasChanged = this._pageHasChanged
+      var pageHasChanged = this._pageHasChanged;
       if (!dirty && pageHasChanged) {
         dirty = pageHasChanged(
           this._getPageData(prevDataBlob, pageID),

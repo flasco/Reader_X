@@ -16,7 +16,7 @@ import IconTouch from '../../components/IconTouch';
 
 import styles from './index.style';
 
-let RefreshCount = 0;
+import { list } from '../../services/book';
 
 class ShelfScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -46,56 +46,53 @@ class ShelfScreen extends Component {
   };
   constructor(props) {
     super(props);
-    let mockList = [{
-      bookName: '飞剑问道',
-      author: '我吃西红柿',
-      url: 'http://www.xs.la/34_34495/',
-      recordChapter: 'http://www.xs.la/3434495/2266828.html',
-      latestChapter: '待检测',
-      recordPage: 1,
-      plantformId: 5,
-    }, {
-      bookName: '元尊',
-      author: '天蚕土豆',
-      url: 'http://www.xs.la/58_58435/',
-      recordChapter: 'http://www.xs.la/58_58435/3485348.html',
-      latestChapter: '待检测',
-      recordPage: 1,
-      plantformId: 5,
-    }]
-
-    this.renderRow = this.renderRow.bind(this);
-    this.keyExtractor = this.keyExtractor.bind(this);
-    this.onHeaderRefresh = this.onHeaderRefresh.bind(this);
-    this.renderFooter = this.renderFooter.bind(this);
 
     this.state = {
-      booklist: mockList,
+      booklist: [],
       loadingFlag: true,
       fetchFlag: false,
     }
+
+    this.onFetch = this.onFetch.bind(this);
+    this.onHeaderRefresh = this.onHeaderRefresh.bind(this);
+    this.renderRow = this.renderRow.bind(this);
+    this.keyExtractor = this.keyExtractor.bind(this);
+    this.renderFooter = this.renderFooter.bind(this);
   }
 
-  onHeaderRefresh() {
-    this.setState({ fetchFlag: RefreshState.HeaderRefreshing })
-    let listlength = this.state.booklist.length;
-    getNet.refreshChapter(this.state.booklist, (Mes) => {
-      if (Mes !== 0) {
-        this.refs.toast.show(Mes);
+  componentDidMount() {
+    this.onFetch();
+  }
+
+  onFetch() {
+    this.setState({ fetchFlag: RefreshState.HeaderRefreshing }, async () => {
+      const {err, data} = await list();
+      if (err) {
+        this.setState({
+          fetchFlag: RefreshState.Failure,
+        });
+        return;
       }
-      RefreshCount++;
-      if (RefreshCount != listlength) return;
+      if (!data || !data.length) {
+        this.setState({
+          fetchFlag: RefreshState.NoMoreData,
+        });
+        return;
+      }
+
       this.setState({
-        booklist: this.state.booklist,
+        booklist: data,
         fetchFlag: RefreshState.Idle,
-      }, () => {
-        RefreshCount = 0;
       });
     });
   }
 
+  onHeaderRefresh() {
+    this.onFetch();
+  }
+
   keyExtractor(item, index) {
-    return item.url;
+    return item.bookId;
   }
 
   renderRow(item) {

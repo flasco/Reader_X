@@ -1149,7 +1149,7 @@ combined-stream@^1.0.5, combined-stream@~1.0.5:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@^2.9.0:
+commander@*, commander@^2.9.0:
   version "2.11.0"
   resolved "http://registry.npm.taobao.org/commander/download/commander-2.11.0.tgz#157152fd1e7a6c8d98a5b715cf376df928004563"
 
@@ -3006,6 +3006,12 @@ minimist@~0.0.1:
   dependencies:
     minimist "0.0.8"
 
+mockjs@^1.0.1-beta3:
+  version "1.0.1-beta3"
+  resolved "http://registry.npm.taobao.org/mockjs/download/mockjs-1.0.1-beta3.tgz#d234f3c27256397564f2c955142e891909537209"
+  dependencies:
+    commander "*"
+
 morgan@~1.6.1:
   version "1.6.1"
   resolved "http://registry.npm.taobao.org/morgan/download/morgan-1.6.1.tgz#5fd818398c6819cba28a7cd6664f292fe1c0bbf2"
@@ -3482,6 +3488,10 @@ qs@~6.5.1:
   version "6.5.1"
   resolved "http://registry.npm.taobao.org/qs/download/qs-6.5.1.tgz#349cdf6eef89ec45c12d7d5eb3fc0c870343a6d8"
 
+querystring@^0.2.0:
+  version "0.2.0"
+  resolved "http://registry.npm.taobao.org/querystring/download/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
+
 random-bytes@~1.0.0:
   version "1.0.0"
   resolved "http://registry.npm.taobao.org/random-bytes/download/random-bytes-1.0.0.tgz#4f68a1dc0ae58bd3fb95848c30324db75d64360b"
@@ -3555,6 +3565,12 @@ react-native-elements@^0.17.0:
     prop-types "^15.5.8"
     react-native-side-menu "^1.0.2"
     react-native-tab-navigator "^0.3.4"
+
+react-native-fetch-mock@^0.3.0:
+  version "0.3.0"
+  resolved "http://registry.npm.taobao.org/react-native-fetch-mock/download/react-native-fetch-mock-0.3.0.tgz#c8964595957b00346fb1064a8f574d384538d330"
+  dependencies:
+    mockjs "^1.0.1-beta3"
 
 react-native-side-menu@^1.0.2:
   version "1.1.3"

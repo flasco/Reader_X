@@ -18,7 +18,7 @@ import styles from './index.style';
 
 let RefreshCount = 0;
 
-class BookList extends Component {
+class ShelfScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: '古意流苏',
@@ -160,4 +160,4 @@ class BookList extends Component {
   }
 }
 
-export default BookList;
+export default ShelfScreen;

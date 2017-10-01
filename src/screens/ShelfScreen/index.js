@@ -50,7 +50,7 @@ class ShelfScreen extends Component {
     this.state = {
       booklist: [],
       loadingFlag: true,
-      fetchFlag: false,
+      fetchFlag: RefreshState.Idle,
     }
 
     this.onFetch = this.onFetch.bind(this);

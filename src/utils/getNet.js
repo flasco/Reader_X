@@ -57,9 +57,9 @@ export default class getNet {
         }
       }
     }).catch(Error => {
-      callback(-1)
+      callback(-1);
       return;
-    })
+    });
   }
 
 }

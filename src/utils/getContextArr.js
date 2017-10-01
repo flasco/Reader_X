@@ -2,7 +2,7 @@ import stringWidth from './stringWidth';
 
 export default function getContextArr(testT, width) {
   let lineCount = 17; //十七行
-  lineWidth = Math.floor((width - 40) * 2 / 23); //24是字体大小，后来属性配置可以修改一下
+  let lineWidth = Math.floor((width - 40) * 2 / 23); //23是字体大小，后来属性配置可以修改一下
   let lines = parseContent(testT, lineWidth);
   let testa = new Array();
   let pag; //定义页数
@@ -19,7 +19,7 @@ export default function getContextArr(testT, width) {
     if (size == lines.length)
       break;
   }
-  totalPage = pag + 1;
+  // totalPage = pag + 1;  
   // console.log(testa);
   return testa;
 }
@@ -49,9 +49,9 @@ function parseContent(str, width, cleanEmptyLine = true) {
         continue;
       }
       if (code == 8220 || code == 8221) {
-        s = `"`;
+        s = '"';
       } else if (code == 8216 || code == 8217) {
-        s = `'`;
+        s = '\'';
       }
 
       var sWidth = stringWidth(s);

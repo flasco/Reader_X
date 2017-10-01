@@ -1,33 +1,32 @@
-
 export default {
-  container: {
+  container : {
     flex: 1,
-    backgroundColor: '#F9F9F9',
+    backgroundColor: '#F9F9F9'
   },
-  nav: {
+  nav : {
     flexDirection: 'row'
   },
-  navItem: {
+  navItem : {
     marginRight: 15,
-    textAlign: 'center',
+    textAlign: 'center'
   },
-  BookItem1: {
+  BookItem1 : {
     marginLeft: 20,
-    fontSize: 15,
+    fontSize: 15
   },
-  solid: {
+  solid : {
     height: 1,
     backgroundColor: '#E1E2E4',
     marginLeft: 15,
     marginRight: 20
   },
-  BookItem2: {
+  BookItem2 : {
     marginLeft: 20,
     fontSize: 12,
     color: '#999999'
   },
-  HeaderHint: {
+  HeaderHint : {
     fontSize: 14,
     color: '#555555'
   }
-}
+};

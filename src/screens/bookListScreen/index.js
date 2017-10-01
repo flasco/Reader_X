@@ -9,9 +9,9 @@ import {
 import { Icon, Button } from 'react-native-elements';
 import Toast from '../../components/Toast';
 
-import RefreshListView, { RefreshState } from '../../components/RefreshFlatList';
+import RefreshFlatList, { RefreshState } from '../../components/RefreshFlatList';
 import getNet from '../../utils/getNet';
-import BookItem from '../../components/BookItemComp';
+import BookItem from '../../components/BookItem';
 import IconTouch from '../../components/IconTouch';
 
 import styles from './index.style';
@@ -133,8 +133,6 @@ class BookList extends Component {
           }}
         />
       </View>
-
-
     );
   }
 
@@ -146,7 +144,7 @@ class BookList extends Component {
           position='center'
           bot={30} />
         <StatusBar barStyle="light-content"></StatusBar>
-        <RefreshListView
+        <RefreshFlatList
           style={{ flex: 1 }}
           data={this.state.booklist}
           renderItem={this.renderRow}

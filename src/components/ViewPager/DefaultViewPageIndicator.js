@@ -3,27 +3,29 @@
 var React = require('react');
 var ReactNative = require('react-native');
 var {
-    Dimensions,
+  Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Animated,
+  Animated
 } = ReactNative;
 
-var deviceWidth = Dimensions.get('window').width;
+var deviceWidth = Dimensions
+  .get('window')
+  .width;
 var DOT_SIZE = 6;
 var DOT_SAPCE = 4;
 
 var styles = StyleSheet.create({
   tab: {
-    alignItems: 'center',
+    alignItems: 'center'
   },
 
   tabs: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
 
   dot: {
@@ -32,7 +34,7 @@ var styles = StyleSheet.create({
     borderRadius: DOT_SIZE / 2,
     backgroundColor: '#E0E1E2',
     marginLeft: DOT_SAPCE,
-    marginRight: DOT_SAPCE,
+    marginRight: DOT_SAPCE
   },
 
   curDot: {
@@ -42,8 +44,8 @@ var styles = StyleSheet.create({
     borderRadius: DOT_SIZE / 2,
     backgroundColor: '#80ACD0',
     margin: DOT_SAPCE,
-    bottom: 0,
-  },
+    bottom: 0
+  }
 });
 
 var DefaultViewPageIndicator = React.createClass({
@@ -54,16 +56,17 @@ var DefaultViewPageIndicator = React.createClass({
   },
 
   getInitialState() {
-    return {
-      viewWidth: 0,
-    };
+    return {viewWidth: 0};
   },
 
   renderIndicator(page) {
     //var isTabActive = this.props.activePage === page;
     return (
-      <TouchableOpacity style={styles.tab} key={'idc_' + page} onPress={() => this.props.goToPage(page)}>
-        <View style={styles.dot} />
+      <TouchableOpacity
+        style={styles.tab}
+        key={'idc_' + page}
+        onPress={() => this.props.goToPage(page)}>
+        <View style={styles.dot}/>
       </TouchableOpacity>
     );
   },
@@ -75,9 +78,17 @@ var DefaultViewPageIndicator = React.createClass({
 
     //var left = offset;
     var offsetX = itemWidth * (this.props.activePage - this.props.scrollOffset);
-    var left = this.props.scrollValue.interpolate({
-      inputRange: [0, 1], outputRange: [offsetX, offsetX + itemWidth]
-    });
+    var left = this
+      .props
+      .scrollValue
+      .interpolate({
+        inputRange: [
+          0, 1
+        ],
+        outputRange: [
+          offsetX, offsetX + itemWidth
+        ]
+      });
 
     var indicators = [];
     for (var i = 0; i < pageCount; i++) {
@@ -85,21 +96,22 @@ var DefaultViewPageIndicator = React.createClass({
     }
 
     return (
-      <View style={styles.tabs}
+      <View
+        style={styles.tabs}
         onLayout={(event) => {
           var viewWidth = event.nativeEvent.layout.width;
           if (!viewWidth || this.state.viewWidth === viewWidth) {
             return;
           }
-          this.setState({
-            viewWidth: viewWidth,
-          });
+          this.setState({viewWidth: viewWidth});
         }}>
         {indicators}
-        <Animated.View style={[styles.curDot, { left }]} />
+        <Animated.View style={[styles.curDot, {
+          left
+        }]}/>
       </View>
     );
-  },
+  }
 });
 
 module.exports = DefaultViewPageIndicator;

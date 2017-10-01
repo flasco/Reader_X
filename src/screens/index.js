@@ -9,10 +9,10 @@ const TopNavigator = StackNavigator({
     screen: ShelfScreen
   },
 }, {
-    mode: 'modal',
-    navigationOptions: {
-      gesturesEnabled: false
-    }
-  });
+  mode: 'modal',
+  navigationOptions: {
+    gesturesEnabled: false
+  }
+});
 
 export default TopNavigator;

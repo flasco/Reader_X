@@ -62,7 +62,7 @@ class ShelfScreen extends Component {
       latestChapter: '待检测',
       recordPage: 1,
       plantformId: 5,
-    }]
+    }];
 
     this.renderRow = this.renderRow.bind(this);
     this.keyExtractor = this.keyExtractor.bind(this);
@@ -73,11 +73,11 @@ class ShelfScreen extends Component {
       booklist: mockList,
       loadingFlag: true,
       fetchFlag: false,
-    }
+    };
   }
 
   onHeaderRefresh() {
-    this.setState({ fetchFlag: RefreshState.HeaderRefreshing })
+    this.setState({ fetchFlag: RefreshState.HeaderRefreshing });
     let listlength = this.state.booklist.length;
     getNet.refreshChapter(this.state.booklist, (Mes) => {
       if (Mes !== 0) {

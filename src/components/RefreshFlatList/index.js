@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native'
 
 export const RefreshState = {
@@ -9,27 +9,14 @@ export const RefreshState = {
 }
 
 const DEBUG = false
-const log = (text: string) => { DEBUG && console.log(text) }
-
-type Props = {
-  refreshState: number,
-  onHeaderRefresh: (refreshState: number) => void,
-  data: Array<any>,
-
-  listRef?: any,
-}
-
-type State = {}
+const log = (text) => { DEBUG && console.log(text) }
 
 class RefreshListView extends PureComponent {
-  props: Props
-  state: State
-
-  componentWillReceiveProps(nextProps: Props) {
+  componentWillReceiveProps(nextProps) {
     log('[RefreshListView]  RefreshListView componentWillReceiveProps ' + nextProps.refreshState)
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps, prevState) {
     log('[RefreshListView]  RefreshListView componentDidUpdate ' + prevProps.refreshState)
   }
 
@@ -66,6 +53,18 @@ class RefreshListView extends PureComponent {
     )
   }
 
+}
+
+RefreshListView.propTypes = {
+  refreshState: PropTypes.arrayOf(Object.values(RefreshState)).isRequired,
+  onHeaderRefresh: PropTypes.func.isRequired,
+  data: PropTypes.array.isRequired,
+
+  listRef: PropTypes.string,
+}
+
+RefreshListView.defaultProps = {
+  onHeaderRefresh: () => {},
 }
 
 export default RefreshListView;

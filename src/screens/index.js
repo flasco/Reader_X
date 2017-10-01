@@ -2,13 +2,11 @@ import {
   StackNavigator
 } from 'react-navigation';
 
-import bookListScreen from './bookListScreen';
-
-
+import BookListScreen from './BookListScreen';
 
 const TopNavigator = StackNavigator({
   Home: {
-    screen: bookListScreen
+    screen: BookListScreen
   },
 }, {
     mode: 'modal',

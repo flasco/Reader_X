@@ -7,16 +7,16 @@ import {
 } from 'react-native';
 
 import { Icon, Button } from 'react-native-elements';
-import Toast from '../../components/react-native-easy-toast';
+import Toast from '../../components/Toast';
 
 import RefreshListView, { RefreshState } from '../../components/RefreshFlatList';
 import getNet from '../../utils/getNet';
-import BookItem from '../../components/bookItemComp';
+import BookItem from '../../components/BookItemComp';
 import IconTouch from '../../components/IconTouch';
 
 import styles from './index.style';
 
-var RefreshCount = 0;
+let RefreshCount = 0;
 
 class BookList extends Component {
   static navigationOptions = ({ navigation }) => {

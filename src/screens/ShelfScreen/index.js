@@ -4,14 +4,14 @@ import {
   FlatList,
   StatusBar,
   Text,
+  Image,
 } from 'react-native';
 
-import { Icon, Button } from 'react-native-elements';
-import Toast from '../../components/Toast';
+import { Icon, Button, List, ListItem, Divider } from 'react-native-elements';
 
+import Page from '../../components/Page';
 import RefreshFlatList, { RefreshState } from '../../components/RefreshFlatList';
-import getNet from '../../utils/getNet';
-import BookItem from '../../components/BookItem';
+import Toast from '../../components/Toast';
 import IconTouch from '../../components/IconTouch';
 
 import styles from './index.style';
@@ -22,31 +22,32 @@ class ShelfScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: '古意流苏',
-      headerBackTitle: ' ',
-      headerStyle: styles.theme.RedTheme,
       headerRight: (
-        <View style={styles.test.nav}>
-          <IconTouch
-            iconName='magnifying-glass'
-            iconType='entypo'
+        <View style={styles.nav.right.container}>
+          <Icon
+            containerStyle={styles.nav.right.button.container}
+            name='magnifying-glass'
+            type='entypo'
+            color={styles.nav.right.button.color}
+            underlayColor={styles.nav.right.button.underlayColor}
             onPress={() => { }}
           />
-          <IconTouch
-            iconName='dots-three-horizontal'
-            iconType='entypo'
+          <Icon
+            containerStyle={styles.nav.right.button.container}
+            name='dots-three-horizontal'
+            type='entypo'
+            color={styles.nav.right.button.color}
+            underlayColor={styles.nav.right.button.underlayColor}
             onPress={() => { }}
           />
         </View>
       ),
-      headerTitleStyle: {
-        color: '#fff',
-        alignSelf: 'center'
-      }
+      tabBarLabel: '书架',
     };
   };
   constructor(props) {
     super(props);
-    
+
     this.state = {
       booklist: [],
       loadingFlag: true,
@@ -55,8 +56,8 @@ class ShelfScreen extends Component {
 
     this.onFetch = this.onFetch.bind(this);
     this.onHeaderRefresh = this.onHeaderRefresh.bind(this);
+    this.renderInfo = this.renderInfo.bind(this);
     this.renderRow = this.renderRow.bind(this);
-    this.keyExtractor = this.keyExtractor.bind(this);
     this.renderFooter = this.renderFooter.bind(this);
   }
 
@@ -66,7 +67,7 @@ class ShelfScreen extends Component {
 
   onFetch() {
     this.setState({ fetchFlag: RefreshState.HeaderRefreshing }, async () => {
-      const {err, data} = await list();
+      const { err, data } = await list();
       if (err) {
         this.setState({
           fetchFlag: RefreshState.Failure,
@@ -91,38 +92,54 @@ class ShelfScreen extends Component {
     this.onFetch();
   }
 
-  keyExtractor(item, index) {
-    return item.bookId;
+  renderInfo(item) {
+    return (
+      <View style={styles.item.info.container}>
+        <View style={styles.item.info.text.container}>
+          <Text style={styles.item.info.text.text}>
+            {item.author}
+          </Text>
+        </View>
+        <View style={styles.item.info.text.container}>
+          <Text style={styles.item.info.text.text}>
+            {item.lastUpdateChapterName}
+          </Text>
+        </View>
+      </View>
+    );
   }
 
   renderRow(item) {
     const rowData = item.item;
     return (
-      <BookItem
+      <ListItem
+        containerStyle={styles.item.container}
+        hideChevron={ true }
+        leftIcon={<Image source={require('../../assets/testPic.jpeg')} style={styles.item.icon} />}
+        title={rowData.bookName}
+        titleStyle={styles.item.title.text}
+        titleContainerStyle={styles.item.title.container}
+        subtitle={this.renderInfo(rowData)} 
         onPress={() => { }}
-        imgSrc={require('../../assets/testPic.jpeg')}
-        bookName={rowData.bookName}
-        author={rowData.author}
-        latestChapter={rowData.latestChapter} />
+      />
     );
   }
 
   renderSeparator() {
-    return (<View style={styles.test.solid} />);
+    return <Divider style={styles.divider} />;
   }
 
   renderFooter() {
     return (
-      <View style={{ alignItems: 'center',marginTop:14, }}>
+      <View style={styles.readMore.container}>
         <Button
-          containerViewStyle={{ height: 10 }}
-          backgroundColor='#F9F9F9'
-          borderRadius={22}
-          buttonStyle={{ borderWidth: 1, borderColor: 'red',height:10,width: 86, }}
-          color='red'
+          containerViewStyle={styles.readMore.button.wrapper}
+          borderRadius={styles.readMore.button.borderRadius}
+          buttonStyle={styles.readMore.button.button}
+          color={styles.readMore.button.color}
           title='浏览记录'
-          fontSize={12}
-          rightIcon={{name: 'chevron-right',color: 'red',style: styles.test.IconStyle}}
+          fontSize={styles.readMore.button.fontSize}
+          rightIcon={{ name: 'chevron-right', color: 'red', style: styles.readMore.button.chevron }}
         />
       </View>
     );
@@ -130,24 +147,24 @@ class ShelfScreen extends Component {
 
   render() {
     return (// toast 的bot 是为了针对 使用了导航之后导致window的高度变小而导致的位置变化
-      <View style={styles.test.container}>
+      <Page>
         <Toast
           ref="toast"
           position='center'
           bot={30} />
-        <StatusBar barStyle="light-content"></StatusBar>
-        <RefreshFlatList
-          style={{ flex: 1 }}
-          data={this.state.booklist}
-          renderItem={this.renderRow}
-          ItemSeparatorComponent={this.renderSeparator}
-          getItemLayout={(data, index) => ({ length: 90, offset: 91 * index, index })}//行高38，分割线1，所以offset=39
-          keyExtractor={this.keyExtractor}
-          refreshState={this.state.fetchFlag}
-          onHeaderRefresh={this.onHeaderRefresh}
-          ListFooterComponent={this.renderFooter}
-        />
-      </View>
+        <List style={styles.list.container}>
+          <RefreshFlatList
+            data={this.state.booklist}
+            renderItem={this.renderRow}
+            ItemSeparatorComponent={this.renderSeparator}
+            // getItemLayout={(data, index) => ({ length: 90, offset: 91 * index, index })}//行高38，分割线1，所以offset=39
+            keyExtractor={(item, index) => item.bookId}
+            refreshState={this.state.fetchFlag}
+            onHeaderRefresh={this.onHeaderRefresh}
+            ListFooterComponent={this.renderFooter}
+          />
+        </List>
+      </Page>
     );
   }
 }

@@ -7,6 +7,7 @@
  */
 
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {StyleSheet, View, Animated, Dimensions, Text} from 'react-native';
 
 export const DURATION = {
@@ -135,15 +136,14 @@ const styles = StyleSheet.create({
 
 Toast.propTypes = {
   style: View.propTypes.style,
-  position: React
-    .PropTypes
+  position: PropTypes
     .oneOf(['top', 'center', 'bottom']),
-  bot: React.PropTypes.number,
+  bot: PropTypes.number,
   textStyle: Text.propTypes.style,
-  positionValue: React.PropTypes.number,
-  fadeInDuration: React.PropTypes.number,
-  fadeOutDuration: React.PropTypes.number,
-  opacity: React.PropTypes.number
+  positionValue: PropTypes.number,
+  fadeInDuration: PropTypes.number,
+  fadeOutDuration: PropTypes.number,
+  opacity: PropTypes.number
 };
 
 Toast.defaultProps = {

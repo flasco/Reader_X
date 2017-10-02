@@ -1,13 +1,14 @@
 
-import { colors } from './variables';
+import variables from './variables';
 import nav from './nav.style';
 import tip from './tip.style';
 
 export default {
+  variables,
   barStyle: 'light-content',
   ...nav,
   page: {
-    backgroundColor: colors.contrast,
+    backgroundColor: variables.colors.contrast,
   },
   ...tip,
 };

@@ -20,10 +20,14 @@ class Theme {
   }
 
   set current(name) {
-    if (name !== 'default' || name !== 'black') {
+    if (name !== 'default' && name !== 'black') {
       throw `no named ${name} theme could be foud.`;
     }
     this[_current] = name;
+  }
+
+  get current() {
+    return this[_current];
   }
 
 }
@@ -39,19 +43,31 @@ class ThemeProvider extends Component {
     this.state = {
       active: 'default',
     };
+
+    this.active = this.active.bind(this);
   }
 
   active(name = 'default') {
     this.theme.current = name;
     this.setState({
       active: name,
+    }, () => {
+      alert(`current theme ${this.state.active}`)
     });
   }
 
   render() {
+    const childrenWithProps = React.Children.map(this.props.children,
+      (child) => React.cloneElement(child, {
+        screenProps: {
+          activeTheme: this.active,
+        },
+      })
+    );
+
     return (
       <View style={{ flex: 1 }}>
-        {this.props.children}
+        {childrenWithProps}
       </View>
     );
   }
@@ -59,4 +75,4 @@ class ThemeProvider extends Component {
 
 export default ThemeProvider;
 export { globalTheme as theme };
-export { width, height, colors, weight, size } from './default/variables';
+export const {width, height, colors, weight, size} = globalTheme.styles.variables;

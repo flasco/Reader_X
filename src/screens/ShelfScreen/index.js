@@ -14,30 +14,32 @@ import RefreshFlatList, { RefreshState } from '../../components/RefreshFlatList'
 import Toast from '../../components/Toast';
 import IconTouch from '../../components/IconTouch';
 
+import { theme } from '../../theme';
 import styles from './index.style';
 
 import { list } from '../../services/book';
 
 class ShelfScreen extends Component {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = ({ navigation, screenProps }) => {
     return {
       title: '古意流苏',
+      headerStyle: theme.styles.navContainer,
       headerRight: (
-        <View style={styles.nav.right.container}>
+        <View style={theme.styles.navRightContainer}>
           <Icon
-            containerStyle={styles.nav.right.button.container}
+            containerStyle={theme.styles.navButtonContainer}
             name='magnifying-glass'
             type='entypo'
-            color={styles.nav.right.button.color}
-            underlayColor={styles.nav.right.button.underlayColor}
+            color={theme.styles.navButton.color}
+            underlayColor={theme.styles.navButton.underlayColor}
             onPress={() => { }}
           />
           <Icon
-            containerStyle={styles.nav.right.button.container}
+            containerStyle={theme.styles.navButtonContainer}
             name='dots-three-horizontal'
             type='entypo'
-            color={styles.nav.right.button.color}
-            underlayColor={styles.nav.right.button.underlayColor}
+            color={theme.styles.navButton.color}
+            underlayColor={theme.styles.navButton.underlayColor}
             onPress={() => { }}
           />
         </View>
@@ -63,6 +65,11 @@ class ShelfScreen extends Component {
 
   componentDidMount() {
     this.onFetch();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log(theme.styles);
+    console.log('update props');
   }
 
   onFetch() {
@@ -135,11 +142,14 @@ class ShelfScreen extends Component {
         <Button
           containerViewStyle={styles.readMore.button.wrapper}
           borderRadius={styles.readMore.button.borderRadius}
-          buttonStyle={styles.readMore.button.button}
-          color={styles.readMore.button.color}
+          buttonStyle={[styles.readMore.button.button, {borderColor: theme.styles.variables.colors.main}]}
+          color={theme.styles.variables.colors.main}
           title='浏览记录'
           fontSize={styles.readMore.button.fontSize}
-          rightIcon={{ name: 'chevron-right', color: 'red', style: styles.readMore.button.chevron }}
+          rightIcon={{ name: 'chevron-right', color: theme.styles.variables.colors.main, style: styles.readMore.button.chevron }}
+          onPress={() => {
+            this.props.screenProps.activeTheme('black');
+          }}
         />
       </View>
     );
@@ -157,11 +167,11 @@ class ShelfScreen extends Component {
             data={this.state.booklist}
             renderItem={this.renderRow}
             ItemSeparatorComponent={this.renderSeparator}
-            // getItemLayout={(data, index) => ({ length: 90, offset: 91 * index, index })}//行高38，分割线1，所以offset=39
             keyExtractor={(item, index) => item.bookId}
             refreshState={this.state.fetchFlag}
             onHeaderRefresh={this.onHeaderRefresh}
             ListFooterComponent={this.renderFooter}
+            extraData={theme.styles.variables.colors.main}  // 设置主题色（如果不设置则无法触发list刷新DOM）
           />
         </List>
       </Page>

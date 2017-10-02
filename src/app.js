@@ -13,7 +13,7 @@ export default (props) => {
   return (
     <ThemeProvider>
       <StatusBar barStyle={theme.styles.barStyle} />
-      <AppNavigator {...props} />
+      <AppNavigator a={1} />
     </ThemeProvider>
   );
 };

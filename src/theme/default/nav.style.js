@@ -1,11 +1,6 @@
 
 import { colors, size } from './variables';
 
-const button = {
-  color: colors.contrast,
-  fontSize: size.ml,
-}
-
 export default {
   navContainer: {
     backgroundColor: colors.main,
@@ -24,5 +19,8 @@ export default {
   navButtonContainer: {
     width: 40,
   },
-  button,
+  navButton: {
+    color: colors.contrast,
+    underlayColor: colors.transparent,
+  },
 }

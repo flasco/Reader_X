@@ -1,16 +1,6 @@
 import { theme, size, colors } from '../../theme';
 
 export default {
-  nav: {
-    right: {
-      container: theme.styles.navRightContainer,
-      button: {
-        container: theme.styles.navButtonContainer,
-        color: colors.contrast,
-        underlayColor: colors.transparent,
-      }
-    }
-  },
   list: {
     container: {
       flex: 1,

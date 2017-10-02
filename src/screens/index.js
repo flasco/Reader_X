@@ -37,10 +37,10 @@ const BookTabNavigator = TabNavigator({
 }, {
   mode: 'screen',
   tabBarPosition: 'bottom',
-  navigationOptions: {
+  navigationOptions: () => ({
     headerStyle: theme.styles.navContainer,
     headerTitleStyle: theme.styles.navTitle,
-  }
+  })
 });
 
 const TopNavigator = StackNavigator({

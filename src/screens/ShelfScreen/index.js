@@ -23,7 +23,6 @@ class ShelfScreen extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     return {
       title: '古意流苏',
-      headerStyle: theme.styles.navContainer,
       headerRight: (
         <View style={theme.styles.navRightContainer}>
           <Icon

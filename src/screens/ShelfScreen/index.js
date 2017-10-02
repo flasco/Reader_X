@@ -67,11 +67,6 @@ class ShelfScreen extends Component {
     this.onFetch();
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log(theme.styles);
-    console.log('update props');
-  }
-
   onFetch() {
     this.setState({ fetchFlag: RefreshState.HeaderRefreshing }, async () => {
       const { err, data } = await list();

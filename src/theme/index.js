@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, AsyncStorage } from 'react-native';
 import defaultTheme from './default';
 import blackTheme from './black';
 
@@ -45,14 +45,33 @@ class ThemeProvider extends Component {
     };
 
     this.active = this.active.bind(this);
+    this.load = this.load.bind(this);
+    
+    this.load();
+  }
+
+  async load() {
+    try {
+      const value = await AsyncStorage.getItem('@Reader_X:theme');
+      if (value !== null){
+        this.active(value);
+      }
+    } catch (error) {
+      console.error(`change theme error ${JSON.stringify(error)}`);
+    }
   }
 
   active(name = 'default') {
     this.theme.current = name;
     this.setState({
       active: name,
-    }, () => {
-      alert(`current theme ${this.state.active}`)
+    }, async () => {
+      // save to localstorage
+      try {
+        await AsyncStorage.setItem('@Reader_X:theme', name);
+      } catch (error) {
+        console.error(`set theme ${name} error ${JSON.stringify(error)}`);
+      }
     });
   }
 

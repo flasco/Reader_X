@@ -3,12 +3,16 @@ import {
   TabNavigator,
 } from 'react-navigation';
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
+import { Icon } from 'react-native-elements';
+import { HeaderBackButton } from 'react-navigation';
 
 import ShelfScreen from './ShelfScreen';
 import RecommandScreen from './RecommandScreen';
 import RankingScreen from './RankingScreen';
 import SettingScreen from './SettingScreen';
+
+import BookScreen from './BookScreen';
 
 import { theme } from '../theme';
 
@@ -37,20 +41,47 @@ const BookTabNavigator = TabNavigator({
 }, {
   mode: 'screen',
   tabBarPosition: 'bottom',
-  navigationOptions: () => ({
-    headerStyle: theme.styles.navContainer,
-    headerTitleStyle: theme.styles.navTitle,
-  })
+});
+
+const MainNavigator = StackNavigator({
+  Home: {
+    screen: BookTabNavigator,
+  },
+  Book: {
+    screen: BookScreen,
+  },
+}, {
+  mode: 'screen',
+  navigationOptions: ({ navigation, screenProps }) => {
+    if (navigation.state.index === 0) {
+      return {
+        headerStyle: theme.styles.navContainer,
+        headerTitleStyle: theme.styles.navTitle,
+      };
+    }
+    return {
+      headerStyle: theme.styles.navContainer,
+      headerTitleStyle: theme.styles.navTitle,
+      headerLeft: (
+        <HeaderBackButton
+          title='返回'
+          tintColor={theme.styles.navButton.color}
+          onPress={() => navigation.goBack()}
+        />
+      )
+    }
+  }
 });
 
 const TopNavigator = StackNavigator({
-  Home: {
-    screen: BookTabNavigator,
+  Main: {
+    screen: MainNavigator,
   },
 }, {
   mode: 'modal',
   navigationOptions: {
-    gesturesEnabled: false
+    header: null,
+    gesturesEnabled: false,
   }
 });
 

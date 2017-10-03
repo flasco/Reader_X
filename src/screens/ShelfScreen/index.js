@@ -116,12 +116,14 @@ class ShelfScreen extends Component {
       <ListItem
         containerStyle={styles.item.container}
         hideChevron={ true }
-        leftIcon={<Image source={require('../../assets/testPic.jpeg')} style={styles.item.icon} />}
+        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.bookId}/180`}} style={styles.item.icon} />}
         title={rowData.bookName}
         titleStyle={styles.item.title.text}
         titleContainerStyle={styles.item.title.container}
         subtitle={this.renderInfo(rowData)} 
-        onPress={() => { }}
+        onPress={() => {
+          this.props.navigation.navigate('Book', {...rowData});
+        }}
       />
     );
   }

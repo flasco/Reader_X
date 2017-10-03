@@ -11,6 +11,7 @@ export default {
   },
   navLeftContainer: {
     marginLeft: 10,
+    flexDirection: 'row',
   },
   navRightContainer: {
     marginRight: 10,

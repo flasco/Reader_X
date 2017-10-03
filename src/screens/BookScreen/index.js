@@ -323,11 +323,12 @@ class BookScreen extends Component {
           onScroll={(e) => {
             this.onScrollOverTitle(e.nativeEvent.contentOffset.y);
           }}
+          light='light'
           scrollEventThrottle={3}
           backgroundSource={{uri: 'https://img6.bdstatic.com/img/image/public/bizhi112.png'}}
           header={this.renderBookInfo(book)}
           windowHeight={styles.info.container.height}
-          backgroundHeight={styles.info.container.height + 360}
+          backgroundHeight={styles.info.container.height + 60}
         >
           {this.renderBookStatistics(book)}
           {this.renderBookDetail(book)}

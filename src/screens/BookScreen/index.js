@@ -312,7 +312,7 @@ class BookScreen extends Component {
     return (
       <Page containerStyle={styles.page}>
         <ScrollView
-          style={{ flex: 1, marginBottom: 20, }}
+          style={{ flex: 1, }}
           onScroll={(e) => {
             this.onScrollOverTitle(e.nativeEvent.contentOffset.y);
           }}

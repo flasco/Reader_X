@@ -65,6 +65,7 @@ const subword = (str) => {
 class BookScreen extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     return {
+      title: `${navigation.state.params.title ? navigation.state.params.title : ''}`,
       headerStyle: {
         backgroundColor: theme.styles.variables.colors.transparent,
       },
@@ -91,6 +92,7 @@ class BookScreen extends Component {
     }
 
     this.onFetch = this.onFetch.bind(this);
+    this.onScrollOverTitle = this.onScrollOverTitle.bind(this);
     this.renderListStyleItem = this.renderListStyleItem.bind(this);
     this.renderBookInfo = this.renderBookInfo.bind(this);
     this.renderBookStatistics = this.renderBookStatistics.bind(this);
@@ -120,6 +122,20 @@ class BookScreen extends Component {
     this.setState({
       book: data,
     });
+  }
+
+  onScrollOverTitle(y) {
+    if (!this.overed && y >= 35) {
+      this.overed = true;
+      this.props.navigation.setParams({
+        title: this.state.book.BookName,
+      });
+    } else if (this.overed && y < 35) {
+      this.overed = false;
+      this.props.navigation.setParams({
+        title: '',
+      });
+    }
   }
 
   renderListStyleItem(item) {
@@ -295,7 +311,13 @@ class BookScreen extends Component {
     const book = this.state.book;
     return (
       <Page containerStyle={styles.page}>
-        <ScrollView style={{ flex: 1, marginBottom: 20, }}>
+        <ScrollView
+          style={{ flex: 1, marginBottom: 20, }}
+          onScroll={(e) => {
+            this.onScrollOverTitle(e.nativeEvent.contentOffset.y);
+          }}
+          scrollEventThrottle={3}
+        >
           {this.renderBookInfo(book)}
           {this.renderBookStatistics(book)}
           {this.renderBookDetail(book)}

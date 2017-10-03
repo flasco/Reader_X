@@ -327,7 +327,7 @@ class BookScreen extends Component {
           backgroundSource={{uri: 'https://img6.bdstatic.com/img/image/public/bizhi112.png'}}
           header={this.renderBookInfo(book)}
           windowHeight={styles.info.container.height}
-          backgroundHeight={styles.info.container.height + 60}
+          backgroundHeight={styles.info.container.height + 360}
         >
           {this.renderBookStatistics(book)}
           {this.renderBookDetail(book)}

@@ -4043,7 +4043,7 @@ react-native-fetch-mock@^0.3.0:
 
 "react-native-parallax-view@https://github.com/WhatAKitty/react-native-parallax-view.git":
   version "2.1.0"
-  resolved "https://github.com/WhatAKitty/react-native-parallax-view.git#4d873c710b1c7244234636bcce17a333a8343e65"
+  resolved "https://github.com/WhatAKitty/react-native-parallax-view.git#4e0c662f621d5338fc855627f8cdbd1ed628e75a"
   dependencies:
     react-native-scrollable-mixin "^1.0.1"
 

@@ -16,6 +16,7 @@
 		"react-native-bottom-sheet": "^1.0.2",
 		"react-native-elements": "^0.17.0",
 		"react-native-fetch-mock": "^0.3.0",
+		"react-native-parallax-view": "https://github.com/WhatAKitty/react-native-parallax-view.git",
 		"react-native-vector-icons": "^4.4.0",
 		"react-navigation": "^1.0.0-beta.13",
 		"strip-ansi": "^4.0.0"

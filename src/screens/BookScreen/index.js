@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import { Icon, Button, Rating, Divider, Avatar } from 'react-native-elements';
+import ParallaxView from 'react-native-parallax-view';
 
 import Page from '../../components/Page';
 import RefreshFlatList, { RefreshState } from '../../components/RefreshFlatList';
@@ -67,7 +68,13 @@ class BookScreen extends Component {
     return {
       title: `${navigation.state.params.title ? navigation.state.params.title : ''}`,
       headerStyle: {
+        position: 'absolute',
         backgroundColor: theme.styles.variables.colors.transparent,
+        zIndex: 100,
+        top: 0,
+        left: 0,
+        right: 0,
+        borderBottomWidth: 0,
       },
       headerRight: (
         <View style={theme.styles.navRightContainer}>
@@ -311,20 +318,23 @@ class BookScreen extends Component {
     const book = this.state.book;
     return (
       <Page containerStyle={styles.page}>
-        <ScrollView
-          style={{ flex: 1, }}
+        <ParallaxView
+          style={{ flex: 1, paddingTop: 60, }}
           onScroll={(e) => {
             this.onScrollOverTitle(e.nativeEvent.contentOffset.y);
           }}
           scrollEventThrottle={3}
+          backgroundSource={{uri: 'https://img6.bdstatic.com/img/image/public/bizhi112.png'}}
+          header={this.renderBookInfo(book)}
+          windowHeight={styles.info.container.height}
+          backgroundHeight={styles.info.container.height + 60}
         >
-          {this.renderBookInfo(book)}
           {this.renderBookStatistics(book)}
           {this.renderBookDetail(book)}
           {this.renderBookHonor(book)}
           {this.renderBookComment(book)}
           {this.renderAuthorInfo(book)}
-        </ScrollView>
+        </ParallaxView>
       </Page>
     );
   }

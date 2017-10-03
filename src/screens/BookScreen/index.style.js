@@ -39,12 +39,12 @@ export default {
   },
   info: {
     container: {
-      backgroundColor: '#000',
       flexDirection: 'row',
       paddingTop: 10,
       paddingLeft: 15,
       paddingRight: 15,
       paddingBottom: 15,
+      height: 150,
     },
     preview: {
       width: 95,

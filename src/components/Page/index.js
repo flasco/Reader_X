@@ -55,7 +55,7 @@ class Page extends Component {
     }
 
     return (
-      <View style={[this.props.containerStyle, styles.container, { flex: 1 }]}>
+      <View style={[styles.container, this.props.containerStyle, { flex: 1 }]}>
         {this.props.children}
       </View>
     );

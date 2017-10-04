@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import { Icon, Button, Rating, Divider, Avatar } from 'react-native-elements';
+import ParallaxView from 'react-native-parallax-view';
 
 import Page from '../../components/Page';
 import RefreshFlatList, { RefreshState } from '../../components/RefreshFlatList';
@@ -65,8 +66,15 @@ const subword = (str) => {
 class BookScreen extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     return {
+      title: `${navigation.state.params.title ? navigation.state.params.title : ''}`,
       headerStyle: {
+        position: 'absolute',
         backgroundColor: theme.styles.variables.colors.transparent,
+        zIndex: 100,
+        top: 0,
+        left: 0,
+        right: 0,
+        borderBottomWidth: 0,
       },
       headerRight: (
         <View style={theme.styles.navRightContainer}>
@@ -91,6 +99,7 @@ class BookScreen extends Component {
     }
 
     this.onFetch = this.onFetch.bind(this);
+    this.onScrollOverTitle = this.onScrollOverTitle.bind(this);
     this.renderListStyleItem = this.renderListStyleItem.bind(this);
     this.renderBookInfo = this.renderBookInfo.bind(this);
     this.renderBookStatistics = this.renderBookStatistics.bind(this);
@@ -120,6 +129,20 @@ class BookScreen extends Component {
     this.setState({
       book: data,
     });
+  }
+
+  onScrollOverTitle(y) {
+    if (!this.overed && y >= 35) {
+      this.overed = true;
+      this.props.navigation.setParams({
+        title: this.state.book.BookName,
+      });
+    } else if (this.overed && y < 35) {
+      this.overed = false;
+      this.props.navigation.setParams({
+        title: '',
+      });
+    }
   }
 
   renderListStyleItem(item) {
@@ -295,14 +318,24 @@ class BookScreen extends Component {
     const book = this.state.book;
     return (
       <Page containerStyle={styles.page}>
-        <ScrollView style={{ flex: 1, marginBottom: 20, }}>
-          {this.renderBookInfo(book)}
+        <ParallaxView
+          style={{ flex: 1, paddingTop: 60, }}
+          onScroll={(e) => {
+            this.onScrollOverTitle(e.nativeEvent.contentOffset.y);
+          }}
+          light='light'
+          scrollEventThrottle={3}
+          backgroundSource={{uri: 'https://img6.bdstatic.com/img/image/public/bizhi112.png'}}
+          header={this.renderBookInfo(book)}
+          windowHeight={styles.info.container.height}
+          backgroundHeight={styles.info.container.height + 60}
+        >
           {this.renderBookStatistics(book)}
           {this.renderBookDetail(book)}
           {this.renderBookHonor(book)}
           {this.renderBookComment(book)}
           {this.renderAuthorInfo(book)}
-        </ScrollView>
+        </ParallaxView>
       </Page>
     );
   }

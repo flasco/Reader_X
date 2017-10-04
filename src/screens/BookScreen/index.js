@@ -319,7 +319,8 @@ class BookScreen extends Component {
     return (
       <Page containerStyle={styles.page}>
         <ParallaxView
-          style={{ flex: 1, paddingTop: 60, }}
+          style={styles.parallax}
+          scrollableViewStyle={styles.scrollview}
           onScroll={(e) => {
             this.onScrollOverTitle(e.nativeEvent.contentOffset.y);
           }}

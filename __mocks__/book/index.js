@@ -81,6 +81,50 @@ export default {
       data: all,
     };
   },
+  '/api/v1/history': ({ method, url, params, urlparams, headers }) => {
+    const all = Mock.mock({
+      'list|2': [{
+        'bookId|+1': 1006853204,
+        'bookName': '文化入侵异世界',
+        'authorId': 3112022,
+        'author': '姐姐的新娘',
+        'isVip': 1,
+        'imageStatus': 1,
+        'lastUpdateChapterID': 376292828,
+        'lastUpdateChapterName': '第三百零一章 过时',
+        'lastChapterUpdateTime': 1506786023000,
+        'lastVipUpdateChapterId': 387124661,
+        'lastVipUpdateChapterName': '第三百零一章 过时',
+        'lastVipChapterUpdateTime': 1506786023000,
+        'wordsCount': 682009,
+        'categoryName': '科幻',
+        'subCategoryName': '时空穿梭',
+        'categoryId': 100117,
+        'bookStatus': '连载',
+        'enableBookUnitBuy': 0,
+        'enableBookUnitLease': 0,
+        'bssReadTotal': 685864,
+        'bssRecomTotal': 152538,
+        'label': '明星|种田文|赚钱',
+        'description': '一群巨龙搬着小板凳日夜追看《权力游戏》。精灵大德鲁伊们因为《忠犬八公的故事》而潸然泪下。人类与矮人在《炉石传说》酒馆中为一张传说卡牌而大大出手。甚至就连神明也亲',
+        'readingType': 5,
+        'algInfo': '',
+        'adid': 0,
+        'overrating': null,
+        'sourceType': 0,
+        'sourceDesc': null,
+        'authorTagId': '明星|种田文|赚钱',
+        'bookInternalId': 5841993,
+        'prob': 0,
+        'recommendRate': null,
+        'staticscore1': 5423
+      }]
+    }).list;
+    return {
+      status: 200,
+      data: all,
+    };
+  },
   '/api/v1/books/{id}': ({ method, url, params, urlparams, headers }) => {
     const obj = Mock.mock({
       'obj': {

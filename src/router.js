@@ -15,16 +15,16 @@ const getCurrentRoute = (navigationState) => {
 }
 
 const _routes = Symbol('routes');
-const _current = Symbol('_current');
+const _current = Symbol('current');
 
 class Router {
   constructor() {
     this[_routes] = [];
-    this[_current] = -1;
+    this[_current] = 0;
   }
 
   get first() {
-    return this[_current] === 0 || this[_current] === -1;
+    return this[_current] === 0;
   }
 
   get prev() {
@@ -36,7 +36,9 @@ class Router {
     this[_routes].push({
       routeName,
       params,
+      action,
     });
+    this[_current]++;
     navigation.dispatch(
       NavigationActions.navigate({
         routeName,
@@ -47,11 +49,10 @@ class Router {
   }
 
   goBack(navigation, key) {
-    if (!key) key = this.prev && this.prev.routeName;
     this[_routes].pop();
     navigation.dispatch(
       NavigationActions.back({
-        key: key === undefined ? navigation.state.key : key,
+        key: undefined,
       })
     )
   }

@@ -8,31 +8,78 @@ import Page from '../../components/Page';
 import RefreshFlatList, { RefreshState } from '../../components/RefreshFlatList';
 import BookComment from '../../components/BookComment';
 
+import { list } from '../../services/comment';
+
+import styles from './index.style';
+
 class BookForum extends Component {
-  constructor(props) {
-    super(props);
+  static navigationOptions = {
+    title: '书评',
   }
 
-  renderRow(item) {
-    const rowData = item.item;
-    return <BookComment item={item} />;
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      comments: [],
+      fetchFlag: RefreshState.Idle,
+    }
+
+    this.onFetch = this.onFetch.bind(this);
+    this.onHeaderRefresh = this.onHeaderRefresh.bind(this);
+    this.renderRow = this.renderRow.bind(this);
+  }
+
+  componentDidMount() {
+    this.onFetch();
+  }
+
+  onFetch() {
+    this.setState({ fetchFlag: RefreshState.HeaderRefreshing }, async () => {
+      const { err, data } = await list();
+      if (err) {
+        this.setState({
+          fetchFlag: RefreshState.Failure,
+        });
+        return;
+      }
+      if (!data || !data.length) {
+        this.setState({
+          fetchFlag: RefreshState.NoMoreData,
+        });
+        return;
+      }
+
+      this.setState({
+        comments: data,
+        fetchFlag: RefreshState.Idle,
+      });
+    });
+  }
+
+  onHeaderRefresh() {
+    this.onFetch();
+  }
+
+  renderRow({ item, index }) {
+    return <BookComment item={item} itemContainerStyle={styles.item} />;
   }
 
   render() {
-    <Page>
-      <List style={styles.list.container}>
-        <RefreshFlatList
-          data={this.state.booklist}
-          renderItem={this.renderRow}
-          ItemSeparatorComponent={this.renderSeparator}
-          keyExtractor={(item, index) => item.bookId}
-          refreshState={this.state.fetchFlag}
-          onHeaderRefresh={this.onHeaderRefresh}
-          ListFooterComponent={this.renderFooter}
-          extraData={theme.styles.variables.colors.main}  // 设置主题色（如果不设置则无法触发list刷新DOM）
-        />
-      </List>
-    </Page>
+    return (
+      <Page style={styles.page}>
+        <List style={styles.container}>
+          <RefreshFlatList
+            data={this.state.comments}
+            renderItem={this.renderRow}
+            ItemSeparatorComponent={this.renderSeparator}
+            keyExtractor={(item, index) => item.Id}
+            refreshState={this.state.fetchFlag}
+            onHeaderRefresh={this.onHeaderRefresh}
+          />
+        </List>
+      </Page>
+    );
   }
 }
 

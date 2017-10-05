@@ -111,8 +111,7 @@ class ShelfScreen extends Component {
     );
   }
 
-  renderRow(item) {
-    const rowData = item.item;
+  renderRow({ item: rowData, index }) {
     return (
       <ListItem
         containerStyle={styles.item.container}

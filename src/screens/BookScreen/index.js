@@ -140,20 +140,24 @@ class BookScreen extends Component {
     }
   }
 
-  renderListStyleItem(item) {
+  renderListStyleItem(item, onPress) {
     return (
-      <View style={styles.listStyleItem.container}>
-        <Text style={styles.listStyleItem.label}>{item.label ? item.label : ''}</Text>
-        <Text style={styles.listStyleItem.value}>{item.value ? item.value : ''}</Text>
-        <Icon
-          containerStyle={styles.listStyleItem.chevron.container}
-          name='chevron-right'
-          type='entypo'
-          size={styles.listStyleItem.chevron.size}
-          color={styles.listStyleItem.chevron.color}
-          underlayColor={styles.listStyleItem.chevron.color}
-        />
-      </View>
+      <TouchableWithoutFeedback
+        onPress={onPress}
+      >
+        <View style={styles.listStyleItem.container}>
+          <Text style={styles.listStyleItem.label}>{item.label ? item.label : ''}</Text>
+          <Text style={styles.listStyleItem.value}>{item.value ? item.value : ''}</Text>
+          <Icon
+            containerStyle={styles.listStyleItem.chevron.container}
+            name='chevron-right'
+            type='entypo'
+            size={styles.listStyleItem.chevron.size}
+            color={styles.listStyleItem.chevron.color}
+            underlayColor={styles.listStyleItem.chevron.color}
+          />
+        </View>
+      </TouchableWithoutFeedback>
     )
   }
 
@@ -245,7 +249,9 @@ class BookScreen extends Component {
   renderBookComment(book) {
     return (
       <View style={styles.area.container}>
-        {this.renderListStyleItem({ label: '书评', value: `${book.BookForumCount ? `${formatNumber(book.BookForumCount, 0, true, 1)}+` : ''}` })}
+        {this.renderListStyleItem({ label: '书评', value: `${book.BookForumCount ? `${formatNumber(book.BookForumCount, 0, true, 1)}+` : ''}` }, () => {
+          this.props.screenProps.router.navigate(this.props.navigation, 'Forum');
+        })}
         {this.renderCommmentList(book.BookReviewList)}
       </View>
     );

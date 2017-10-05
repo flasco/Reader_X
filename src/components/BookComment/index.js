@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { View, Image, Text } from 'react-native';
 
 import styles from './index.style';
@@ -10,9 +11,9 @@ const subword = (str) => {
   return str;
 }
 
-export default ({item}) => {
+const BookComment = ({ item, itemContainerStyle }) => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, itemContainerStyle]}>
       <Image style={styles.avatar} source={{ uri: `https://qidian.qpic.cn/qd_face/349573/${item.UserId}/100` }} />
       <View style={styles.textContainer}>
         <View style={styles.name.container}>
@@ -24,3 +25,16 @@ export default ({item}) => {
     </View>
   );
 }
+
+BookComment.propTypes = {
+  item: PropTypes.shape({
+    UserId: PropTypes.number.isRequired,
+    UserName: PropTypes.string.isRequired,
+    PostDate: PropTypes.number.isRequired,
+    From: PropTypes.string.isRequired,
+    Body: PropTypes.string.isRequired,
+  }).isRequired,
+  itemContainerStyle: PropTypes.object,
+};
+
+export default BookComment;

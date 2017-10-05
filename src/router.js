@@ -44,7 +44,6 @@ class Router {
         action,
       })
     );
-    console.log(this[_routes])
   }
 
   goBack(navigation, key) {

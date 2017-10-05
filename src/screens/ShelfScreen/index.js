@@ -6,6 +6,7 @@ import {
   Text,
   Image,
 } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 
 import { Icon, Button, List, ListItem, Divider } from 'react-native-elements';
 
@@ -122,7 +123,8 @@ class ShelfScreen extends Component {
         titleContainerStyle={styles.item.title.container}
         subtitle={this.renderInfo(rowData)} 
         onPress={() => {
-          this.props.navigation.navigate('Book', {...rowData});
+          // this.props.navigation.navigate('Book', {...rowData});
+          this.props.screenProps.router.navigate(this.props.navigation, 'Book', {...rowData});
         }}
       />
     );

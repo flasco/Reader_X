@@ -5,6 +5,13 @@ export default {
   page: {
     backgroundColor: '#eee',
   },
+  parallax: {
+    flex: 1,
+    paddingTop: 60,
+  },
+  scrollview: {
+    backgroundColor: '#eee',
+  },
   listStyleItem: {
     container: {
       flexDirection: 'row',
@@ -85,7 +92,7 @@ export default {
     container: {
       backgroundColor: colors.contrast,
       flexDirection: 'row',
-      height: 50,
+      height: 70,
     },
     item: {
       container: {

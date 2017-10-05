@@ -6,6 +6,7 @@ import {
   Text,
   Image,
   ScrollView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 import { Icon, Button, Rating, Divider, Avatar } from 'react-native-elements';
@@ -13,6 +14,7 @@ import ParallaxView from 'react-native-parallax-view';
 
 import Page from '../../components/Page';
 import RefreshFlatList, { RefreshState } from '../../components/RefreshFlatList';
+import BookComment from '../../components/BookComment';
 import Toast from '../../components/Toast';
 
 import { theme } from '../../theme';
@@ -56,16 +58,10 @@ const formatNumber = (number, fixed = 0, unit = true, type = 0) => {
   return number;
 }
 
-const subword = (str) => {
-  if (str.length > 100) {
-    return `${str.substring(0, 100)}...`;
-  }
-  return str;
-}
-
 class BookScreen extends Component {
-  static navigationOptions = ({ navigation, screenProps }) => {
+  static navigationOptions = ({ navigation, navigationOptions, screenProps }) => {
     return {
+      ...navigationOptions,
       title: `${navigation.state.params.title ? navigation.state.params.title : ''}`,
       headerStyle: {
         position: 'absolute',
@@ -106,7 +102,6 @@ class BookScreen extends Component {
     this.renderBookStatisticsItem = this.renderBookStatisticsItem.bind(this);
     this.renderBookDetail = this.renderBookDetail.bind(this);
     this.renderBookHonor = this.renderBookHonor.bind(this);
-    this.renderComment = this.renderComment.bind(this);
     this.renderCommmentList = this.renderCommmentList.bind(this);
     this.renderBookComment = this.renderBookComment.bind(this);
     this.renderAuthorBooks = this.renderAuthorBooks.bind(this);
@@ -236,30 +231,15 @@ class BookScreen extends Component {
     );
   }
 
-  renderComment(item) {
-    return (
-      <View key={item.Id} style={styles.comment.item.container}>
-        <Image style={styles.comment.item.avatar} source={{ uri: `https://qidian.qpic.cn/qd_face/349573/${item.UserId}/100` }} />
-        <View style={styles.comment.item.textContainer}>
-          <View style={styles.comment.item.name.container}>
-            <Text>{item.UserName}</Text>
-          </View>
-          <Text style={styles.comment.item.info}>{`${item.PostDate}：${item.From}`}</Text>
-          <Text style={styles.comment.item.text}>{subword(item.Body)}</Text>
-        </View>
-      </View>
-    );
-  }
-
   renderCommmentList(list) {
     if (!list || !list.length) {
       return false;
     }
     return (
       <View style={styles.area.contentContainer}>
-        {list.map(item => this.renderComment(item))}
+        {list.map(item => <BookComment key={item.Id} item={item} />)}
       </View>
-    )
+    );
   }
 
   renderBookComment(book) {
@@ -277,13 +257,18 @@ class BookScreen extends Component {
         {
           books.map(book => {
             return (
-              <View key={book.BookId} style={styles.author.books.book.container}>
-                <Image style={styles.author.books.book.preview} source={{ uri: `https://qidian.qpic.cn/qdbimg/349573/${book.BookId}/180` }} />
-                <View style={styles.author.books.book.titleWrapper}>
-                  <Text style={styles.author.books.book.title}>{book.BookName}</Text>
+              <TouchableWithoutFeedback
+                key={book.BookId}
+                onPress={() => {this.props.navigation.navigate('Book', {...this.state.book})}}
+              >
+                <View style={styles.author.books.book.container}>
+                  <Image style={styles.author.books.book.preview} source={{ uri: `https://qidian.qpic.cn/qdbimg/349573/${book.BookId}/180` }} />
+                  <View style={styles.author.books.book.titleWrapper}>
+                    <Text style={styles.author.books.book.title}>{book.BookName}</Text>
+                  </View>
+                  <Text style={styles.author.books.book.readers}>{`${formatNumber(book.BssReadTotal, 1, true, 1)}人...`}</Text>
                 </View>
-                <Text style={styles.author.books.book.readers}>{`${formatNumber(book.BssReadTotal, 1, true, 1)}人...`}</Text>
-              </View>
+              </TouchableWithoutFeedback>
             )
           })
         }
@@ -319,7 +304,8 @@ class BookScreen extends Component {
     return (
       <Page containerStyle={styles.page}>
         <ParallaxView
-          style={{ flex: 1, paddingTop: 60, }}
+          style={styles.parallax}
+          scrollableViewStyle={styles.scrollview}
           onScroll={(e) => {
             this.onScrollOverTitle(e.nativeEvent.contentOffset.y);
           }}

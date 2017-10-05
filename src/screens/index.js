@@ -5,7 +5,9 @@ import {
 import React from 'react';
 import { Text, View } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { HeaderBackButton } from 'react-navigation';
+import { HeaderBackButton, NavigationActions } from 'react-navigation';
+
+import Router from '../router';
 
 import ShelfScreen from './ShelfScreen';
 import RecommandScreen from './RecommandScreen';
@@ -13,17 +15,32 @@ import RankingScreen from './RankingScreen';
 import SettingScreen from './SettingScreen';
 
 import BookScreen from './BookScreen';
+import BookForum from './BookForum';
 
 import { theme } from '../theme';
 
-const StackNavigatorWrapper = (key, Comp) => {
-  const Wrapper = StackNavigator({
-    [key]: {
-      screen: Comp,
-    }
-  });
-  return Wrapper;
-}
+const options = (props) => {
+  const { navigation, navigationOptions, screenProps } = props;
+  if (navigation.state.index === 0) {
+    return {
+      headerStyle: theme.styles.navContainer,
+      headerTitleStyle: theme.styles.navTitle,
+    };
+  }
+  return {
+    headerStyle: theme.styles.navContainer,
+    headerTitleStyle: theme.styles.navTitle,
+    headerLeft: (
+      <HeaderBackButton
+        title='返回'
+        tintColor={theme.styles.navButton.color}
+        onPress={() => {
+          screenProps.router.goBack(navigation);
+        }}
+      />
+    ),
+  }
+};
 
 const BookTabNavigator = TabNavigator({
   Shelf: {
@@ -43,46 +60,61 @@ const BookTabNavigator = TabNavigator({
   tabBarPosition: 'bottom',
 });
 
+const BookNavigator = StackNavigator({
+  Info: {
+    screen: BookScreen,
+  },
+  Forum: {
+    screen: BookForum,
+  },
+}, {
+  headerMode: 'screen',
+  navigationOptions: options,
+  initialRouteName: 'Info',
+});
+
 const MainNavigator = StackNavigator({
   Home: {
     screen: BookTabNavigator,
   },
   Book: {
-    screen: BookScreen,
+    screen: BookNavigator,
+    navigationOptions: (props) => {
+      return {
+        ...options(props),
+        header: null,
+      }
+    },
   },
 }, {
   mode: 'screen',
-  navigationOptions: ({ navigation, screenProps }) => {
-    if (navigation.state.index === 0) {
-      return {
-        headerStyle: theme.styles.navContainer,
-        headerTitleStyle: theme.styles.navTitle,
-      };
-    }
-    return {
-      headerStyle: theme.styles.navContainer,
-      headerTitleStyle: theme.styles.navTitle,
-      headerLeft: (
-        <HeaderBackButton
-          title='返回'
-          tintColor={theme.styles.navButton.color}
-          onPress={() => navigation.goBack()}
-        />
-      )
-    }
-  }
+  headerMode: 'screen',
+  navigationOptions: options,
+  initialRouteName: 'Home',
 });
+
+const MainScreen = (props) => {
+  return (
+    <MainNavigator 
+      screenProps={{
+        ...props.screenProps,
+        router: new Router(),
+      }}
+    />
+  );
+}
 
 const TopNavigator = StackNavigator({
   Main: {
-    screen: MainNavigator,
+    screen: MainScreen,
   },
 }, {
   mode: 'modal',
+  headerMode: 'none',
   navigationOptions: {
-    header: null,
     gesturesEnabled: false,
-  }
+  },
+  initialRouteName: 'Main',
 });
 
 export default TopNavigator;

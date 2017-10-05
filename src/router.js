@@ -33,12 +33,12 @@ class Router {
   }
 
   navigate(navigation, routeName, params, action) {
+    this[_current]++;
     this[_routes].push({
       routeName,
       params,
       action,
     });
-    this[_current]++;
     navigation.dispatch(
       NavigationActions.navigate({
         routeName,
@@ -49,6 +49,7 @@ class Router {
   }
 
   goBack(navigation, key) {
+    this[_current]--;
     this[_routes].pop();
     navigation.dispatch(
       NavigationActions.back({

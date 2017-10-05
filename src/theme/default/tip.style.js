@@ -10,4 +10,4 @@ export default {
     fontSize: size.md,
     color: colors.text,
   }
-}
+};

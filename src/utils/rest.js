@@ -171,4 +171,4 @@ export {
   PATCH,
   DELETE,
   UPLOAD,
-}
+};

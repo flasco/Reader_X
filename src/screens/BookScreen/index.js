@@ -42,11 +42,11 @@ function fixedRound(number, fixed, type = 0) {
   if (fixed === 0) return Math.round(number);
   var t = Math.pow(10, fixed);
   switch (type) {
-    case 0: return Math.round(number * t) / t;
-    case 1: return Math.floor(number * t) / t;
-    case 2: return Math.ceil(number * t) / t;
-    default:
-      throw new Error(`No type ${type}`);
+  case 0: return Math.round(number * t) / t;
+  case 1: return Math.floor(number * t) / t;
+  case 2: return Math.ceil(number * t) / t;
+  default:
+    throw new Error(`No type ${type}`);
   }
 
 }
@@ -56,7 +56,7 @@ const formatNumber = (number, fixed = 0, unit = true, type = 0) => {
     return `${fixedRound(number / 10000, fixed, type)}${unit ? '万' : ''}`;
   }
   return number;
-}
+};
 
 class BookScreen extends Component {
   static navigationOptions = ({ navigation, navigationOptions, screenProps }) => {
@@ -92,7 +92,7 @@ class BookScreen extends Component {
 
     this.state = {
       book: {},
-    }
+    };
 
     this.onFetch = this.onFetch.bind(this);
     this.onScrollOverTitle = this.onScrollOverTitle.bind(this);
@@ -158,7 +158,7 @@ class BookScreen extends Component {
           />
         </View>
       </TouchableWithoutFeedback>
-    )
+    );
   }
 
   renderBookInfo(book) {
@@ -176,7 +176,7 @@ class BookScreen extends Component {
           <Text style={styles.info.text.others}>{book.WordsCnt && book.BookStatus ? `${formatNumber(book.WordsCnt, 1)}字 | ${book.BookStatus}` : '--'}</Text>
         </View>
       </View>
-    )
+    );
   }
 
   renderBookStatisticsItem(item) {
@@ -188,7 +188,7 @@ class BookScreen extends Component {
         </View>
         <Text style={styles.statistics.item.label}>{item.label}</Text>
       </View>
-    )
+    );
   }
 
   renderBookStatistics(book) {
@@ -212,7 +212,7 @@ class BookScreen extends Component {
       <View style={styles.statistics.container}>
         {statistics.map(item => this.renderBookStatisticsItem(item))}
       </View>
-    )
+    );
   }
 
   renderBookDetail(book) {
@@ -265,7 +265,7 @@ class BookScreen extends Component {
             return (
               <TouchableWithoutFeedback
                 key={book.BookId}
-                onPress={() => {this.props.navigation.navigate('Book', {...this.state.book})}}
+                onPress={() => {this.props.navigation.navigate('Book', {...this.state.book});}}
               >
                 <View style={styles.author.books.book.container}>
                   <Image style={styles.author.books.book.preview} source={{ uri: `https://qidian.qpic.cn/qdbimg/349573/${book.BookId}/180` }} />
@@ -275,11 +275,11 @@ class BookScreen extends Component {
                   <Text style={styles.author.books.book.readers}>{`${formatNumber(book.BssReadTotal, 1, true, 1)}人...`}</Text>
                 </View>
               </TouchableWithoutFeedback>
-            )
+            );
           })
         }
       </ScrollView>
-    )
+    );
   }
 
   renderAuthorInfo(book) {

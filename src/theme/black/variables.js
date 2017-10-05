@@ -12,10 +12,10 @@ export const colors = {
   text: 'black',           // 文本色（基于对比色）
   info: '#999',           // 信息色（基于对比色）
   transparent: 'transparent',   // 透明
-}
+};
 
 export default {
   weight,
   size,
   colors,
-}
+};

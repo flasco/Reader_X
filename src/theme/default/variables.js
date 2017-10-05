@@ -22,7 +22,7 @@ export const colors = {
   text: 'black',           // 文本色（基于对比色）
   info: '#999',           // 信息色（基于对比色）
   transparent: 'transparent',   // 透明
-}
+};
 
 export const { width, height } = Dimensions.get('window');
 
@@ -32,4 +32,4 @@ export default {
   colors,
   width,
   height,
-}
+};

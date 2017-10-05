@@ -8,3 +8,9 @@ export async function item(id) {
   return await GET(`/api/v1/books/${id}`);
 }
 
+export async function content() {
+  return await GET('/api/v1/books/content', {
+    x:'sss',
+  });
+}
+

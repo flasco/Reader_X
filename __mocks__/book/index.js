@@ -958,4 +958,18 @@ export default {
       data: obj,
     };
   },
-}
+  '/api/v1/books/content': ({ method, url, params, urlparams, headers }) => {
+    const all = Mock.mock({
+      'obj':{
+        'title': '入坑必看~',
+        'content':'\n\t\t\t\t@@\n各位入坑的小宝贝们，《十夜书》不完全是一本书，它是由二十个不同的故事组成（或许更多）。\n本书暂分两卷，第一卷是古言，第二卷会有玄幻成分。如《骨生花》、《非鱼》、《桥姬》等等。\nＰＳ：每周超过５００推荐票或１００人次打赏，小楼都会加更一章。还请喜欢的小宝贝们不要吝啬收藏和票票哟～\n么么哒＾．＾@@\n正在手打中，客官请稍等片刻，内容更新后，需要重新刷新页面，才能获取最新更新！\n本站重要通知:请使用本站的免费小说APP,无广告、破防盗版、更新快,会员同步书架,请关注微信公众号appxsyd(按住三秒复制)下载免费阅读器!!\n\t\t\t\t\n\t\t\t\t',
+        'prev':'http://www.qu.la/book/book/33301/./',
+        'next':'http://www.qu.la/book/book/33301/1825140.html',
+      }
+    }).obj;
+    return {
+      status: 200,
+      data: all,
+    };
+  },
+};

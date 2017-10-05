@@ -1,5 +1,5 @@
 
-import { colors, size, weight } from '../../theme'
+import { colors, size, weight } from '../../theme';
 
 export default {
   page: {

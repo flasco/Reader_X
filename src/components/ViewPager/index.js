@@ -55,11 +55,13 @@ var ViewPager = React.createClass({
     return {
       isLoop: false,
       locked: false,
+      autoPlay: false,
+      renderPageIndicator: false,
       animation: function(animate, toValue, gs) {
         return Animated.timing(animate,
           {
             toValue: toValue,
-            duration: 180,
+            duration: 60,
             easing: Easing.linear,
             useNativeDriver: true,//使用原生驱动，更加流畅
           });

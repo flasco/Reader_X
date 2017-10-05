@@ -14,6 +14,8 @@ import RecommandScreen from './RecommandScreen';
 import RankingScreen from './RankingScreen';
 import SettingScreen from './SettingScreen';
 
+import ReadScreen from './ReadScreen';
+
 import BookScreen from './BookScreen';
 import BookForum from './BookForum';
 
@@ -39,7 +41,7 @@ const options = (props) => {
         }}
       />
     ),
-  }
+  };
 };
 
 const BookTabNavigator = TabNavigator({
@@ -67,6 +69,9 @@ const BookNavigator = StackNavigator({
   Forum: {
     screen: BookForum,
   },
+  Read:{
+    screen: ReadScreen,
+  },
 }, {
   headerMode: 'screen',
   navigationOptions: options,
@@ -83,7 +88,7 @@ const MainNavigator = StackNavigator({
       return {
         ...options(props),
         header: null,
-      }
+      };
     },
   },
 }, {
@@ -102,7 +107,7 @@ const MainScreen = (props) => {
       }}
     />
   );
-}
+};
 
 const TopNavigator = StackNavigator({
   Main: {

@@ -7,7 +7,7 @@ class SettingScreen extends Component {
   }
 
   render() {
-    return <Text>Setting</Text>
+    return <Text>Setting</Text>;
   }
 }
 

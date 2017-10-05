@@ -1,26 +1,26 @@
 import stringWidth from './stringWidth';
 
-export default function getContextArr(testT, width) {
-  let lineCount = 17; //十七行
+export default function getContextArr(testT, width,height,fontSize) {
+  // Test(testT, width,height);
+  let lineCount =  parseInt((height - 100) / 34) - 1;
   let lineWidth = Math.floor((width - 40) * 2 / 23); //23是字体大小，后来属性配置可以修改一下
+  // let lineWidth = parseInt(width / 23 - 2)*2;
+  // console.log(fontCount);
+  console.log(lineWidth);
+  // console.log(lineCount);
   let lines = parseContent(testT, lineWidth);
   let testa = new Array();
   let pag; //定义页数
   for (pag = 0; pag < 1000; pag++) {
     testa[pag] = ''; //初始化为文本类型
-    let i = pag * lineCount,
-      size;
-    size = (pag + 1) * lineCount > lines.length
-      ? lines.length
-      : i + lineCount;
+    let i = pag * lineCount, size;
+    size = (pag + 1) * lineCount > lines.length ? lines.length : i + lineCount;
     for (; i < size; i++) {
       testa[pag] += lines[i] + '\n';
     }
     if (size == lines.length)
       break;
   }
-  // totalPage = pag + 1;  
-  // console.log(testa);
   return testa;
 }
 
@@ -48,13 +48,15 @@ function parseContent(str, width, cleanEmptyLine = true) {
         currentLineWidth = 0;
         continue;
       }
-      if (code == 8220 || code == 8221) {
-        s = '"';
-      } else if (code == 8216 || code == 8217) {
+      if (code == 8216 || code == 8217) {
         s = '\'';
       }
 
-      var sWidth = stringWidth(s);
+      if(code >= 48 && code <= 56 || code >= 65 && code <= 91 || code >= 97 && code <= 122){
+        s = String.fromCharCode(code + 65248);  //宽字符的数字、大小写字母转换
+      }
+      let sWidth = stringWidth(s);
+
       if (currentLineWidth + sWidth > width) {
         lines.push(currentLine);
         currentLine = '';

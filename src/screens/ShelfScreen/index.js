@@ -13,6 +13,7 @@ import { Icon, Button, List, ListItem, Divider } from 'react-native-elements';
 import Page from '../../components/Page';
 import RefreshFlatList, { RefreshState } from '../../components/RefreshFlatList';
 import Toast from '../../components/Toast';
+import BookList, { BookListType } from '../../components/BookList';
 
 import { theme } from '../../theme';
 import styles from './index.style';

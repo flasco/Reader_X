@@ -7,7 +7,6 @@ import {
   Text,
   Image,
 } from 'react-native';
-import { NavigationActions } from 'react-navigation';
 
 import { Icon, Button, List, ListItem, Divider } from 'react-native-elements';
 
@@ -161,9 +160,7 @@ class BookList extends Component {
   }
 
   renderRow({ item: rowData, index }) {
-    const onPress = this.props.onItemClicked ? this.props.onItemClicked : () => {
-      this.props.screenProps.router.navigate(this.props.navigation, 'Book', rowData, NavigationActions.navigate({ routeName: 'Info', params: rowData }));
-    };
+    const onPress = this.props.onItemClicked;
     switch(this.props.type) {
       case BookListType.Simple:
         return this.renderSimpleRow({item: rowData, index, onPress});

@@ -33,6 +33,9 @@ class HistoryScreen extends PureComponent {
         <BookList
           datasource={history}
           type={BookListType.Complete}
+          onItemClicked={(item) => {
+            this.props.screenProps.router.navigate(this.props.navigation, 'Book', item, NavigationActions.navigate({ routeName: 'Info', params: item }));
+          }}
         />
       </Page>
     );

@@ -23,7 +23,7 @@ import { theme } from '../theme';
 
 const options = (props) => {
   const { navigation, navigationOptions, screenProps } = props;
-  if (navigation.state.index === 0) {
+  if (screenProps.router.first) {
     return {
       headerStyle: theme.styles.navContainer,
       headerTitleStyle: theme.styles.navTitle,

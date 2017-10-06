@@ -12,7 +12,7 @@ let tht;
 class BottomNav extends Component {
   constructor(props) {
     super(props);
-    
+
     tht = this;
   }
 
@@ -23,7 +23,9 @@ class BottomNav extends Component {
   render() {
     return (
       <View style={styles.Fotter}>
-        <TouchableOpacity style={{ flex: 1 }} onPress={() => {  }}>
+        <TouchableOpacity style={{ flex: 1 }} onPress={() => {
+          this.props.screenProps.router.navigate(this.props.navigation, 'Book', {}, NavigationActions.navigate({ routeName: 'Catalog', params: {} }));
+        }}>
           <Icon
             size={24}
             name='list'
@@ -31,7 +33,10 @@ class BottomNav extends Component {
             color={'#fff'} />
           <Text style={styles.FotterItems}>目录</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{ flex: 1 }} onPress={()=>{ this.props.screenProps.router.navigate(this.props.navigation, 'Book', {}, NavigationActions.navigate({ routeName: 'Catalog', params: {} })); }}>
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          onPress={() => {}}
+        >
           <Icon
             size={24}
             name="moon" //light-up

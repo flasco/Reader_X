@@ -9,6 +9,7 @@ var {
   Text,
   View,
   TouchableOpacity,
+  InteractionManager,
   PanResponder,
   Animated,
   StyleSheet,
@@ -18,13 +19,14 @@ var {
 var StaticRenderer = require('react-native/Libraries/Components/StaticRenderer');
 var TimerMixin = require('react-timer-mixin');
 
-var DefaultViewPageIndicator = require('./DefaultViewPageIndicator');
 var deviceWidth = Dimensions.get('window').width;
 var ViewPagerDataSource = require('./ViewPagerDataSource');
 
 //私人定制
 const LeftBoundary = deviceWidth / 4;
 const RightBoundary = deviceWidth - LeftBoundary;
+
+let Shield = 0;//修复呼出菜单之后下一次滑页出现bug
 
 var ViewPager = React.createClass({
   mixins: [TimerMixin],
@@ -38,13 +40,8 @@ var ViewPager = React.createClass({
     dataSource: PropTypes.instanceOf(ViewPagerDataSource).isRequired,
     renderPage: PropTypes.func.isRequired,
     onChangePage: PropTypes.func,
-    renderPageIndicator: PropTypes.oneOfType([
-      PropTypes.func,
-      PropTypes.bool
-    ]),
     isLoop: PropTypes.bool,
     locked: PropTypes.bool,
-    autoPlay: PropTypes.bool,
     animation: PropTypes.func,
     initialPage: PropTypes.number,
   },
@@ -55,8 +52,6 @@ var ViewPager = React.createClass({
     return {
       isLoop: false,
       locked: false,
-      autoPlay: false,
-      renderPageIndicator: false,
       animation: function(animate, toValue, gs) {
         return Animated.timing(animate,
           {
@@ -72,7 +67,6 @@ var ViewPager = React.createClass({
   getInitialState() {
     var maxP ;
     return {
-      flax:0,
       toprev:0,
       currentPage: 0,
       viewWidth: 0,
@@ -86,7 +80,7 @@ var ViewPager = React.createClass({
     var release = (e, gestureState) => {
       var relativeGestureDistance = gestureState.dx / deviceWidth,
         vx = gestureState.vx;
-
+      Shield = Shield >= 2 ? 0 : Shield;
       var step = 0;
       if (relativeGestureDistance < -0.5 || (relativeGestureDistance < 0 && vx <= -1e-6)) {
         step = 1;
@@ -100,14 +94,14 @@ var ViewPager = React.createClass({
       let clickX = gestureState.x0;
       let moveX = gestureState.dx;
       let flag = gestureState.moveX === 0 ? 0 : ( gestureState.moveX > gestureState.x0 ? -1 : 1 ) ;
-      // if(gestureState.moveX === 0){//点击事件
-      //   // console.log(gestureState.moveX +' '+gestureState.x0);
-      //   flag = 0;
-      // }else{
-      //   flag = gestureState.moveX > gestureState.x0 ? -1 : 1;
-      // }
 
+      if( clickX> LeftBoundary && clickX< RightBoundary  && moveX ==0){
+        this.props.clickBoard();//可以在这里做文章，在打开菜单的时候屏蔽一切滑动操作
+        Shield++;
+        return ;
+      }
 
+      if(this.props.locked) return false;
       if(clickX> RightBoundary && moveX == 0 || flag === 1){
         this.props.hasTouch && this.props.hasTouch(false);
         this.setState({toprev:0},()=>{
@@ -120,9 +114,6 @@ var ViewPager = React.createClass({
           this.movePage(-1, gestureState,moveX !== 0);
           return ;
         });
-      }else if( clickX> LeftBoundary && clickX< RightBoundary  && moveX ==0){
-        this.props.clickBoard();//可以在这里做文章，在打开菜单的时候屏蔽一切滑动操作
-        return ;
       }
 
       this.props.hasTouch && this.props.hasTouch(false);
@@ -132,16 +123,15 @@ var ViewPager = React.createClass({
 
     
     this._panResponder = PanResponder.create({
-      // Claim responder if it's a horizontal pan
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
       onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+      // Claim responder if it's a horizontal pan
       onMoveShouldSetPanResponder: (e, gestureState) => {
+        // console.log(this.props.locked);
         if (Math.abs(gestureState.dx) > Math.abs(gestureState.dy)) {
-          
-          if (this.props.locked !== true && !this.fling) {
-              
+          if (/* (gestureState.moveX <= this.props.edgeHitWidth ||
+              gestureState.moveX >= deviceWidth - this.props.edgeHitWidth) && */
+            this.props.locked !== true && !this.fling) {
             this.props.hasTouch && this.props.hasTouch(true);
-            
             return true;
           }
         }
@@ -155,6 +145,10 @@ var ViewPager = React.createClass({
       
       // Dragging, move the view with the touch
       onPanResponderMove: (e, gestureState) => {
+        if(this.props.locked) return false;
+        if(Shield>=2){
+          return;
+        }
         var dx = gestureState.dx;
         var offsetX = -dx / this.state.viewWidth + this.childIndex;
         this.state.scrollValue.setValue(offsetX);
@@ -189,15 +183,6 @@ var ViewPager = React.createClass({
 
   componentWillReceiveProps(nextProps) {
     
-    if (nextProps.autoPlay) {
-      this._startAutoPlay();
-    } else {
-      if (this._autoPlayer) {
-        this.clearInterval(this._autoPlayer);
-        this._autoPlayer = null;
-      }
-    }
-
     if (nextProps.dataSource) {
       var maxPage = nextProps.dataSource.getPageCount();
       this.maxP = maxPage;
@@ -221,15 +206,6 @@ var ViewPager = React.createClass({
     //     this.goToPage(maxPage, false)
     //   }
 
-  },
-
-  _startAutoPlay() {
-    if (!this._autoPlayer) {
-      this._autoPlayer = this.setInterval(
-        () => {this.movePage(1);},
-        5000
-      );
-    }
   },
 
   goToPage(pageNumber, animate = true) {
@@ -303,20 +279,6 @@ var ViewPager = React.createClass({
     return this.state.currentPage;
   },
 
-  renderPageIndicator(props) {
-    if (this.props.renderPageIndicator === false) {
-      return null;
-    } else if (this.props.renderPageIndicator) {
-      return React.cloneElement(this.props.renderPageIndicator(), props);
-    } else {
-      return (
-        <View style={styles.indicators}>
-          <DefaultViewPageIndicator {...props} />
-        </View>
-      );
-    }
-  },
-
   _getPage(pageIdx, loop = false ) {
     var dataSource = this.props.dataSource;
     var pageID = dataSource.pageIdentities[pageIdx];
@@ -376,8 +338,6 @@ var ViewPager = React.createClass({
       flexDirection: 'row'
     };
 
-    // this.childIndex = hasLeft ? 1 : 0;
-    // this.state.scrollValue.setValue(this.childIndex);
     var translateX = this.state.scrollValue.interpolate({
       inputRange: [0, 1], outputRange: [0, -viewWidth]
     });
@@ -385,7 +345,6 @@ var ViewPager = React.createClass({
     return (
       <View style={{flex: 1}}
         onLayout={(event) => {
-          // console.log('ViewPager.onLayout()');
           var viewWidth = event.nativeEvent.layout.width;
           if (!viewWidth || this.state.viewWidth === viewWidth) {
             return;
@@ -402,12 +361,6 @@ var ViewPager = React.createClass({
           {bodyComponents}
         </Animated.View>
 
-        {this.renderPageIndicator({goToPage: this.goToPage,
-          pageCount: pageIDs.length,
-          activePage: this.state.currentPage,
-          scrollValue: this.state.scrollValue,
-          scrollOffset: this.childIndex,
-        })}
       </View>
     );
   }

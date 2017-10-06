@@ -76,7 +76,11 @@ export default {
   },
 
 
-
+  centr: {
+    marginTop: 35,
+    textAlign: 'center',
+    fontSize: 18,
+  },
 
   title : {
     marginTop: 8,

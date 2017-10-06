@@ -9,6 +9,8 @@ import ViewPager from '../../components/ViewPager';
 import getContextArr from '../../utils/getContextArr';
 import BottomNav from '../../components/BottomNav';
 
+import { content } from '../../services/book';
+
 
 let tht, bookPlant, booklist;
 
@@ -95,37 +97,44 @@ class ReadScreen extends Component {
     this.clickBoard = this.clickBoard.bind(this);
     this.getDataSource = this.getDataSource.bind(this);
 
+    setTimeout(()=>{
+      this.setState({ loadFlag:false });
+    },1000);
   }
 
   renderPage(data, pageID) {
-    console.log(data);
+    // console.log(data);
     return (
       <ReadItem
         data={data}
-        title={this.state.currentItem.title}
+        title={'this.state.currentItem.title'}
         totalPage={this.totalPage}
         page={Number(pageID) + 1} />
     );
   }
 
-  fetchContent(nurl, direct) {
+  async fetchContent(nurl, direct) {
+    const { err, data } = await content(123,457,nurl);
+    console.log(data);
     this.setState({
-      currentItem: {
-        title: `章节测试 ${nurl}`,
-        content: '裘元坐在季文君的床上耍无赖，“都说‘军令如山律如铁’，大将军叫我跟着你，我就得跟着你。”\n从裘元的嘴里听见“军令如山”这句话，季文君也是颇为惊讶。等她换上了一身素衣披头散发的从屏风后走了出来，裘元也从床上爬了起来。\n“这位英雄，你就留下我吧，我什么都能做的。”裘元抓着季文君的肩膀道：“你要是不留我，我恐怕就得被大将军给遣送回京了。英雄，你就当是可怜可怜我，把我留下吧！”\n裘元死命的摇晃着季文君，没一会儿，季文君的额头上就布满了冷汗。\n“松手！”季文君咬着牙推开了裘元。',
-        prev: 'ssss',
-        next: 'ssx',
-        goFlag: direct,
-      }
+      currentItem: data,
+      goFlag: direct,
+      loadFlag: false,
     });
   }
 
   getNextPage() {
-    this.fetchContent('ss', 1);
+    this.setState({ loadFlag: true },()=>{
+      this.fetchContent('ss', 1);
+    });
+    
   }
   
   getPrevPage() {
-    this.fetchContent('aa', -1);
+    this.setState({ loadFlag: true },()=>{
+      this.fetchContent('aa', -1);
+    });
+    
   }
 
   getCurrentPage(pag) {
@@ -133,6 +142,7 @@ class ReadScreen extends Component {
   }
 
   clickBoard() {
+    // console.log('sadasd');
     const flag = this.state.isVisible;
     LayoutAnimation.configureNext({
       duration: 200, //持续时间
@@ -155,9 +165,9 @@ class ReadScreen extends Component {
   }
 
   getDataSource() {
-    let arr = getContextArr(this.state.currentItem.content, width, height, 23);
+    let arr = getContextArr(this.state.currentItem.Data, width, height, 23);
     this.totalPage = arr.length;
-    console.log(arr);
+    // console.log(arr);
     return arr;
   }
 
@@ -169,15 +179,19 @@ class ReadScreen extends Component {
           barStyle={'light-content'}
           hidden={!this.state.isVisible}
           animation={true} />
-        <ViewPager
-          dataSource={ViewDs.cloneWithPages(this.getDataSource())}
-          renderPage={this.renderPage}
-          getNextPage={this.getNextPage}
-          getPrevPage={this.getPrevPage}
-          getCurrentPage={this.getCurrentPage}
-          clickBoard={this.clickBoard}
-          initialPage={1}
-          Gpag={this.state.goFlag} />
+        {this.state.loadFlag ? (
+          <Text style={styles.centr}>
+                Loading...</Text>) :
+          (<ViewPager
+            dataSource={ViewDs.cloneWithPages(this.getDataSource())}
+            renderPage={this.renderPage}
+            getNextPage={this.getNextPage}
+            getPrevPage={this.getPrevPage}
+            getCurrentPage={this.getCurrentPage}
+            clickBoard={this.clickBoard}
+            initialPage={1}
+            locked={this.state.isVisible}
+            Gpag={this.state.goFlag} />)}
         <Toast ref="toast" />
         {this.state.isVisible && <BottomNav screenProps={this.props.screenProps} navigation={this.props.navigation} />}
       </View>

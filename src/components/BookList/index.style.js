@@ -1,5 +1,5 @@
 
-import { size, colors } from '../../theme'
+import { size, colors } from '../../theme';
 
 const vars = {
   commons: {
@@ -16,7 +16,7 @@ const vars = {
     preview: 94,
     previeww: 72,
   },
-}
+};
 
 export default {
   common: {

@@ -35,7 +35,7 @@ class BookList extends Component {
       type: BookListType.Complete,
       loadingFlag: true,
       fetchFlag: RefreshState.Idle,
-    }
+    };
 
     this.onFetch = this.onFetch.bind(this);
     this.onHeaderRefresh = this.onHeaderRefresh.bind(this);
@@ -54,14 +54,14 @@ class BookList extends Component {
   get styles() {
     if (this.currentstyle) return this.currentstyle;
     switch (this.props.type) {
-      case BookListType.Simple:
-        return (this.currentstyle = mergeDeep({}, styles.common, styles.simple));
-      case BookListType.Complete:
-        return (this.currentstyle = mergeDeep({}, styles.common, styles.complete));
-      case BookListType.Custom:
-        return (this.currentstyle = mergeDeep({}, styles.common, this.props.style));
-      default:
-        throw 'error book list type specified.';
+    case BookListType.Simple:
+      return (this.currentstyle = mergeDeep({}, styles.common, styles.simple));
+    case BookListType.Complete:
+      return (this.currentstyle = mergeDeep({}, styles.common, styles.complete));
+    case BookListType.Custom:
+      return (this.currentstyle = mergeDeep({}, styles.common, this.props.style));
+    default:
+      throw 'error book list type specified.';
     }
   }
 
@@ -162,14 +162,14 @@ class BookList extends Component {
   renderRow({ item: rowData, index }) {
     const onPress = this.props.onItemClicked;
     switch(this.props.type) {
-      case BookListType.Simple:
-        return this.renderSimpleRow({item: rowData, index, onPress});
-      case BookListType.Complete:
-        return this.renderCompleteRow({item: rowData, index, onPress});
-      case BookListType.Custom:
-        return this.props.renderRow({item: rowData, index, onPress});
-      default:
-        throw 'error book list type specified.';
+    case BookListType.Simple:
+      return this.renderSimpleRow({item: rowData, index, onPress});
+    case BookListType.Complete:
+      return this.renderCompleteRow({item: rowData, index, onPress});
+    case BookListType.Custom:
+      return this.props.renderRow({item: rowData, index, onPress});
+    default:
+      throw 'error book list type specified.';
     }
   }
 
@@ -200,12 +200,12 @@ BookList.propTypes = {
   style: PropTypes.object,
   renderRow: PropTypes.func,
   onItemClicked: PropTypes.func.isRequired,
-}
+};
 
 BookList.defaultProps = {
   datasource: list,
   type: BookListType.Complete,
   onItemClicked: () => {},
-}
+};
 
 export default BookList;

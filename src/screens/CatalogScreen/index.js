@@ -12,13 +12,6 @@ import RefreshFlatList from '../../components/RefreshFlatList';
 let selected = 0,tht;
 
 
-/**
- * 
- * swap-vert MaterialIcons
- * 
- * @class CatalogScreen
- * @extends {PureComponent}
- */
 class CatalogScreen extends PureComponent {  
     static navigationOptions = ({ navigation, screenProps }) => {
       const callback = () => {
@@ -178,18 +171,6 @@ class CatalogScreen extends PureComponent {
     }
 }
 
-const Wrapper = StackNavigator({
-  cat: {
-    screen: (props) => {
-      return <CatalogScreen {...this.props} screenProps={{
-        ...this.props.screenProps,
-        sort: () => {
-          alert('sort');
-        }
-      }} />;
-    },
-  },
-});
 
 
-export default Wrapper;
+export default CatalogScreen;

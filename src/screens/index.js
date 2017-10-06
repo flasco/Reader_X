@@ -14,10 +14,11 @@ import RecommandScreen from './RecommandScreen';
 import RankingScreen from './RankingScreen';
 import SettingScreen from './SettingScreen';
 
-import ReadScreen from './ReadScreen';
+import HistoryScreen from './HistoryScreen';
 
 import BookScreen from './BookScreen';
 import BookForum from './BookForum';
+import ReadScreen from './ReadScreen';
 
 import { theme } from '../theme';
 
@@ -90,6 +91,9 @@ const MainNavigator = StackNavigator({
         header: null,
       };
     },
+  },
+  History: {
+    screen: HistoryScreen,
   },
 }, {
   mode: 'screen',

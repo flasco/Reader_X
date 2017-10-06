@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, InteractionManager } from 'react-native';
 
 import { Icon } from 'react-native-elements';
+import { NavigationActions } from 'react-navigation';
 
 import styles from './index.style';
 const { height, width } = Dimensions.get('window');
@@ -24,15 +25,15 @@ class BottomNav extends Component {
       <View style={styles.Fotter}>
         <TouchableOpacity style={{ flex: 1 }} onPress={() => {  }}>
           <Icon
-            size={25}
+            size={24}
             name='list'
             type='entypo'
             color={'#fff'} />
           <Text style={styles.FotterItems}>目录</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{ flex: 1 }} onPress={()=>{  }}>
+        <TouchableOpacity style={{ flex: 1 }} onPress={()=>{ this.props.screenProps.router.navigate(this.props.navigation, 'Book', {}, NavigationActions.navigate({ routeName: 'Catalog', params: {} })); }}>
           <Icon
-            size={25}
+            size={24}
             name="moon" //light-up
             type='entypo'
             color={'#fff'} />
@@ -40,7 +41,7 @@ class BottomNav extends Component {
         </TouchableOpacity>
         <TouchableOpacity style={{ flex: 1 }} onPress={() => { alert('coming soon...'); }}>
           <Icon
-            size={25}
+            size={24}
             name="cog"
             type='entypo'
             color={'#fff'} />

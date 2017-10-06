@@ -82,7 +82,7 @@ class ShelfScreen extends Component {
           extraData={theme.styles.variables.colors.main}  // 设置主题色（如果不设置则无法触发list刷新DOM）
           onItemClicked={(item) => {
             // navigate to read page.
-            this.props.screenProps.router.navigate(this.props.navigation, 'Book', item, NavigationActions.navigate({ routeName: 'Read', params: item }));
+            this.props.screenProps.router.navigate(this.props.navigation, 'Book', item, NavigationActions.navigate({ routeName: 'Catalog', params: item }));
           }}
         />
       </Page>

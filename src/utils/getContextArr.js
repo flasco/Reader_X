@@ -2,13 +2,15 @@ import stringWidth from './stringWidth';
 
 export default function getContextArr(testT, width,height,fontSize) {
   // Test(testT, width,height);
-  let lineCount =  parseInt((height - 100) / 34) - 1;
-  let lineWidth = Math.floor((width - 40) * 2 / 23); //23是字体大小，后来属性配置可以修改一下
+  // console.log(testT);
+  testT = testT||'';
+  if(testT.length===0) return [''];
+  let lineCount =  parseInt((height - 40) * 2 /(fontSize + 17)) / 2 >> 0;
+  let lineWidth = Math.floor((width - 40) * 2 / fontSize); //23是字体大小，后来属性配置可以修改一下
   // let lineWidth = parseInt(width / 23 - 2)*2;
-  // console.log(fontCount);
-  console.log(lineWidth);
-  // console.log(lineCount);
+  console.log(lineCount);
   let lines = parseContent(testT, lineWidth);
+  console.log(lines);
   let testa = new Array();
   let pag; //定义页数
   for (pag = 0; pag < 1000; pag++) {
@@ -21,6 +23,7 @@ export default function getContextArr(testT, width,height,fontSize) {
     if (size == lines.length)
       break;
   }
+  console.log(testa);
   return testa;
 }
 
@@ -48,7 +51,9 @@ function parseContent(str, width, cleanEmptyLine = true) {
         currentLineWidth = 0;
         continue;
       }
-      if (code == 8216 || code == 8217) {
+      if (code == 8220 || code == 8221) {
+        s = '"';
+      }else if (code == 8216 || code == 8217) {
         s = '\'';
       }
 

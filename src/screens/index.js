@@ -19,6 +19,7 @@ import HistoryScreen from './HistoryScreen';
 import BookScreen from './BookScreen';
 import BookForum from './BookForum';
 import ReadScreen from './ReadScreen';
+import CatalogScreen from './CatalogScreen';
 
 import { theme } from '../theme';
 
@@ -72,6 +73,9 @@ const BookNavigator = StackNavigator({
   },
   Read:{
     screen: ReadScreen,
+  },
+  Catalog: {
+    screen: CatalogScreen,
   },
 }, {
   headerMode: 'screen',

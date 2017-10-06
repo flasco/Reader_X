@@ -1,14 +1,16 @@
-import style from '../../theme/readPage';
+import { Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 export default {
   Fotter: {
     height: 50,
-    paddingTop: 4,
+    paddingTop: 3,
     backgroundColor: '#000',
     zIndex: 2,
-    width: style.width,
+    width: width,
     position: 'absolute',
-    opacity:0.75,
+    opacity: 0.75,
     bottom: 0,
     left: 0,
     flexDirection: 'row'
@@ -17,6 +19,5 @@ export default {
   FotterItems: {
     color: '#fff', textAlign: 'center', fontSize: 12,
   },
-
 
 };

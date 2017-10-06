@@ -1,8 +1,40 @@
-import styles from '../../theme/readPage';
+import { Dimensions } from 'react-native';
+
+const { height,width } = Dimensions.get('window');
+
+export const containerColors = {
+  zhuishuGreen:'#a2cda6',
+  zhuishuX:'#a0a088',
+  zhuishuY:'#c4c4c4',
+  qidianwhite:'#fff',
+  qidianRockYellow:'#e8e1b7',
+  qidianGreen:'#cde9d3',
+  qidianPink:'#ffc4c7',
+  qidianX:'#e4d2a1',
+  qidianY:'#f3deae',
+
+};
+
+export const fontColors = {
+  qidianGreen:'#2e3e23',
+  zhuishuGreen:'#0d2a0f',
+};
+
+export const bottomColors = {
+  qidianGreen:'#7b9480',
+  zhuishuGreen:'#6e8975',
+};
+
+export const darkColor = {
+  darkConColor:'#1c1c1c',
+  darkFontColor:'#707070',
+  darkBottomColor:'#575757',
+
+};
 
 export default {
-  width : styles.width,
-  height : styles.height,
+  width : width,
+  height : height,
   navRightContainer:{
     marginRight: 10,
     flexDirection: 'row',
@@ -16,32 +48,33 @@ export default {
   },
   SunnyModeContainer : {
     flex: 1,
-    backgroundColor: styles.containerColors.zhuishuGreen,
+    backgroundColor: containerColors.zhuishuGreen,
   },
   MoonModeContainer : {
     flex: 1,
-    backgroundColor: styles.darkColor.darkConColor,
+    backgroundColor: darkColor.darkConColor,
   },
   SunnyMode:{
     Title:{
-      color: styles.bottomColors.zhuishuGreen,
+      color: bottomColors.zhuishuGreen,
     },
     Text:{
-      color: styles.fontColors.zhuishuGreen,
+      color: fontColors.zhuishuGreen,
     }
   },
 
   MoonMode:{
     Title:{
-      color: styles.darkColor.darkFontColor,
+      color: darkColor.darkFontColor,
     },
     Text:{
-      color: styles.darkColor.darkFontColor,
+      color: darkColor.darkFontColor,
     },
     Bottom:{
-      color: styles.darkColor.darkBottomColor,
+      color: darkColor.darkBottomColor,
     }
   },
+
 
 
 
@@ -66,11 +99,11 @@ export default {
   textsize : {
     textAlign:'justify',
     flex: 1,
-    marginTop: 8,
+    marginTop: 12,
     marginLeft: 18,
-    fontSize: 23,
+    fontSize: 23,//lineHeight =  fontSize * 1.5 +1 >>0
     fontStyle: 'normal',
-    lineHeight: 37
+    lineHeight: 35,
   },
   bookCont:{
     marginRight:14,

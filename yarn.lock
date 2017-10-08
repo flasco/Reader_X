@@ -4041,9 +4041,9 @@ react-native-fetch-mock@^0.3.0:
   dependencies:
     mockjs "^1.0.1-beta3"
 
-"react-native-parallax-view@https://github.com/WhatAKitty/react-native-parallax-view.git":
-  version "2.1.0"
-  resolved "https://github.com/WhatAKitty/react-native-parallax-view.git#37debecb067b2d67c1f7a8e413d67664613a500c"
+react-native-pin-parallax-view@^0.0.6:
+  version "0.0.6"
+  resolved "http://registry.npm.taobao.org/react-native-pin-parallax-view/download/react-native-pin-parallax-view-0.0.6.tgz#d4678db709d6b2a6761d2534bea5d8d684baf4c7"
   dependencies:
     react-native-scrollable-mixin "^1.0.1"
 

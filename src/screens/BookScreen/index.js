@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
+import {NavigationActions} from 'react-navigation';
 import { Icon, Button, Rating, Divider, Avatar } from 'react-native-elements';
 import ParallaxView from 'react-native-parallax-view';
 
@@ -42,11 +43,11 @@ function fixedRound(number, fixed, type = 0) {
   if (fixed === 0) return Math.round(number);
   var t = Math.pow(10, fixed);
   switch (type) {
-  case 0: return Math.round(number * t) / t;
-  case 1: return Math.floor(number * t) / t;
-  case 2: return Math.ceil(number * t) / t;
-  default:
-    throw new Error(`No type ${type}`);
+    case 0: return Math.round(number * t) / t;
+    case 1: return Math.floor(number * t) / t;
+    case 2: return Math.ceil(number * t) / t;
+    default:
+      throw new Error(`No type ${type}`);
   }
 
 }
@@ -265,7 +266,9 @@ class BookScreen extends Component {
             return (
               <TouchableWithoutFeedback
                 key={book.BookId}
-                onPress={() => {this.props.navigation.navigate('Book', {...this.state.book});}}
+                onPress={() => {
+                  this.props.screenProps.router.navigate(this.props.navigation, 'Book', item, NavigationActions.navigate({ routeName: 'Info', params: item }));
+                }}
               >
                 <View style={styles.author.books.book.container}>
                   <Image style={styles.author.books.book.preview} source={{ uri: `https://qidian.qpic.cn/qdbimg/349573/${book.BookId}/180` }} />
@@ -317,7 +320,7 @@ class BookScreen extends Component {
           }}
           light='light'
           scrollEventThrottle={3}
-          backgroundSource={{uri: 'https://img6.bdstatic.com/img/image/public/bizhi112.png'}}
+          backgroundSource={{ uri: 'https://img6.bdstatic.com/img/image/public/bizhi112.png' }}
           header={this.renderBookInfo(book)}
           windowHeight={styles.info.container.height}
           backgroundHeight={styles.info.container.height + 60}

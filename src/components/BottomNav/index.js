@@ -24,12 +24,13 @@ class BottomNav extends Component {
     return (
       <View style={styles.Fotter}>
         <TouchableOpacity style={{ flex: 1 }} onPress={() => {
-          this.props.screenProps.router.navigate(this.props.navigation, 'Book', {}, NavigationActions.navigate({ routeName: 'Catalog', params: {} }));
+          let item = {chapterList:this.props.chapterList,bookName:this.props.bookName};
+          this.props.screenProps.router.navigate(this.props.navigation, 'Book', {}, NavigationActions.navigate({ routeName: 'Catalog', params: item }));
         }}>
           <Icon
             size={24}
-            name='list'
-            type='entypo'
+            name='format-list-bulleted'
+            type='MaterialIcons'
             color={'#fff'} />
           <Text style={styles.FotterItems}>目录</Text>
         </TouchableOpacity>
@@ -39,16 +40,16 @@ class BottomNav extends Component {
         >
           <Icon
             size={24}
-            name="moon" //light-up
-            type='entypo'
+            name="brightness-low" //brightness-high 日间模式
+            type='MaterialIcons'
             color={'#fff'} />
           <Text style={styles.FotterItems}>夜间</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ flex: 1 }} onPress={() => { alert('coming soon...'); }}>
           <Icon
             size={24}
-            name="cog"
-            type='entypo'
+            name="settings"
+            type='MaterialIcons'
             color={'#fff'} />
           <Text style={styles.FotterItems}>设置</Text>
         </TouchableOpacity>

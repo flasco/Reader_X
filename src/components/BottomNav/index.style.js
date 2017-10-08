@@ -5,7 +5,7 @@ const { width } = Dimensions.get('window');
 export default {
   Fotter: {
     height: 50,
-    paddingTop: 3,
+    paddingTop: 6,
     backgroundColor: '#000',
     zIndex: 2,
     width: width,

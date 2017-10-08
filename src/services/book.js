@@ -16,3 +16,7 @@ export async function content(bookId,chapterId) {
   return await GET(`/api/v1/books/${bookId}/${chapterId}/content`);
 }
 
+export async function chapterList(bookId) {
+  return await GET(`/api/v1/books/${bookId}/chapterList`);
+}
+

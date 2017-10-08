@@ -1,7 +1,5 @@
 'use strict';
 
-//var warning = require('warning');
-
 function defaultGetPageData(
   dataBlob: any,
   pageID: number | string,

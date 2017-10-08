@@ -9,9 +9,9 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
-import {NavigationActions} from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 import { Icon, Button, Rating, Divider, Avatar } from 'react-native-elements';
-import ParallaxView from 'react-native-parallax-view';
+import { ParallaxView } from 'react-native-pin-parallax-view';
 
 import Page from '../../components/Page';
 import RefreshFlatList, { RefreshState } from '../../components/RefreshFlatList';

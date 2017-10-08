@@ -93,6 +93,7 @@ class ReadScreen extends Component {
       currentItem: '', //作为章节内容的主要获取来源。
       isVisible: false, //判断导航栏是否应该隐藏
       goFlag: 0, //判断是前往上一章（-1）还是下一章（1）
+      recordNum:0
     };
 
     this.renderPage = this.renderPage.bind(this);
@@ -108,7 +109,7 @@ class ReadScreen extends Component {
     this.currentBook = {
       bookName: book.bookName,
       bookId: book.bookId,
-      recordNum:0, //这个是记录最后一次看书的章节，下面的是页数
+      // recordNum:0, //这个是记录最后一次看书的章节，下面的是页数
       // recordPage: book.recordPage,
     };
     // console.log(this.currentBook);
@@ -117,26 +118,14 @@ class ReadScreen extends Component {
       console.log(this.currentBook.bookId);
       this.fetchChapterList(this.currentBook.bookId,()=>{
         console.log(this.chapterList);
-        this.fetchContent(this.chapterList[ this.currentBook.recordNum ].chapterId,1);
+        this.fetchContent(this.chapterList[ this.state.recordNum ].chapterId,1);
       });
-
     }
-
-    
-
-    // setTimeout(()=>{
-    //   let dat = '这里是一个测试第一页的带项目四下收到哦啊好速度好~\n测试第一页的n测试第一页的带n测试第一页的带n测试第一页的带n测试第一页的带带项目四下收到哦啊好速度好~\n测试第一页的带项目四下收到哦啊好速度好~\n测试第一页的带项目四下收到哦啊好速度好~\n测试第一页的带项目四下收到哦啊好速度好~\n测试第一页的带项目四下收到哦啊好速度好~\n测试第一页的带项目四下收到哦啊好速度好~\n测试第一页的带项目四下收到哦啊好速度好~\n测试第一页的带项目四下收到哦啊好速度好~\n';
-    //   this.getDataSource(dat,()=>{
-    //     this.setState({ 
-    //       loadFlag:false 
-    //     });
-    //   });
-    // },1000);
     
   }
 
   renderPage(data, pageID) {
-    const title = this.chapterList[this.currentBook.recordNum].title;
+    const title = this.chapterList[this.state.recordNum].title;
     return (
       <ReadItem
         data={data}
@@ -167,22 +156,22 @@ class ReadScreen extends Component {
   }
 
   getNextPage() {
-    if(this.currentBook.recordNum >= this.chapterList.length - 1 ){
+    if(this.state.recordNum >= this.chapterList.length - 1 ){
       console.log('到最后一页了...');
       return;
     }
-    let chapterId = this.chapterList[ ++this.currentBook.recordNum ].chapterId;
+    let chapterId = this.chapterList[ ++this.state.recordNum ].chapterId;
     this.setState({ loadFlag: true },()=>{
       this.fetchContent( chapterId , 1);
     });
   }
   
   getPrevPage() {
-    if(this.currentBook.recordNum <= 0 ) {
+    if(this.state.recordNum <= 0 ) {
       console.log('到第一页了了...');
       return;
     }
-    let chapterId = this.chapterList[ --this.currentBook.recordNum ].chapterId;
+    let chapterId = this.chapterList[ --this.state.recordNum ].chapterId;
     this.setState({ loadFlag: true },()=>{
       this.fetchContent( chapterId , -1);
     });
@@ -248,6 +237,7 @@ class ReadScreen extends Component {
           screenProps={this.props.screenProps} 
           navigation={this.props.navigation}
           chapterList={this.chapterList}
+          recordNum={this.state.recordNum+1}
           bookName={this.currentBook.bookName} />}
       </View>
     );

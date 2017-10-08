@@ -24,7 +24,8 @@ class BottomNav extends Component {
     return (
       <View style={styles.Fotter}>
         <TouchableOpacity style={{ flex: 1 }} onPress={() => {
-          let item = {chapterList:this.props.chapterList,bookName:this.props.bookName};
+          let item = {chapterList:this.props.chapterList,bookName:this.props.bookName,bookNum:this.props.recordNum};
+          console.log(item.bookNum);
           this.props.screenProps.router.navigate(this.props.navigation, 'Book', {}, NavigationActions.navigate({ routeName: 'Catalog', params: item }));
         }}>
           <Icon

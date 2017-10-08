@@ -1,16 +1,14 @@
 import React, { Component,PureComponent } from 'react';
 import {  Text, View } from 'react-native';
-import { StackNavigator } from 'react-navigation';
 
-import { Button,Divider } from 'react-native-elements';
+import { StackNavigator } from 'react-navigation';
+import { Button,Divider,List,ListItem } from 'react-native-elements';
 
 import styles from './index.style';
 import { theme } from '../../theme';
 
 import RefreshFlatList from '../../components/RefreshFlatList'; 
-
-let selected = 0,tht;
-
+import { chapterList } from '../../services/book';
 
 class CatalogScreen extends PureComponent {  
     static navigationOptions = ({ navigation, screenProps }) => {
@@ -40,93 +38,36 @@ class CatalogScreen extends PureComponent {
     }
     constructor(props) {
       super(props);
-      tht = this;
-      this._FlatList;
+      this.currentChapterId = this.props.navigation.state.params.bookNum || 1;
+      // console.log(this.currentChapterId);
       this.state = {
-        bookList:[
-          {
-            num:0,
-            title:'入坑必看~',
-            url:'http://www.qu.la/book/book/33301/1825139.html',
-            isDownload:true,
-          },{
-            num:1,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:2,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:3,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:4,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:5,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:6,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:7,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:8,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:9,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:10,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:11,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:12,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:13,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          },{
-            num:14,
-            title: '楔子',
-            url: 'http://www.qu.la/book/book/33301/1825140.html',
-            isDownload:false,
-          }
-        ],
+        bookList:[],
         fetchFlag:0,
       };
 
       this.renderSeparator = this.renderSeparator.bind(this);
       this.onHeaderRefresh = this.onHeaderRefresh.bind(this);
       this.renderRow = this.renderRow.bind(this);
+    }
+
+    componentDidMount(){
+      let data = this.props.navigation.state.params.chapterList;
+      this.setState({
+        bookList:data,
+      });
+    }
+
+    async fetchContent(bookId, direct) {
+      const { err, data } = await chapterList(bookId);
+      console.log(data);
+      for(let i = 0,j = data.length;i<j;i++){
+        data[i].isDownload = i % 2 ;//测试句
+      }
+      
+      this.setState({
+        bookList:data,
+      });
+
     }
 
     renderSeparator() {
@@ -142,31 +83,30 @@ class CatalogScreen extends PureComponent {
     }
 
     renderRow(item) {
-      const itemColor = item.item.isDownload?styles.Catalogcolors.loadedChapterColor:styles.Catalogcolors.noLoadChapterColor;
+      const itemColor = item.item.id === this.currentChapterId ? styles.Catalogcolors.selectedColor: (item.item.isDownload ? styles.Catalogcolors.loadedChapterColor : styles.Catalogcolors.noLoadChapterColor);
       return(
-        <View style={styles.itemContainerStyle}>
-          <Text style={[styles.itemFontStyle,itemColor]}>{item.item.title}</Text>
-        </View>
+        <ListItem
+          key={item.item.id}
+          hideChevron={ true }
+          title={item.item.title}
+          titleStyle = {[itemColor,{fontSize:15}]}
+          containerStyle={styles.itemContainerStyle}
+        />
       );
     }
 
-    render() {//this.refs._flat.refs.listRef.
+    render() {
       return (
-        <View style={styles.SunnyModeContainer}>
+        <List style={{flex:1}} >
           <RefreshFlatList
             style={{backgroundColor:'#eeeeee'}}
-            ref={'_flat'}
-            listRef={'_flatListx'}
             data = {this.state.bookList}
             renderItem={this.renderRow}
             ItemSeparatorComponent={this.renderSeparator}
-            keyExtractor={(item, index) => item.num}
+            keyExtractor={(item, index) => item.id}
             refreshState={this.state.fetchFlag}
             onHeaderRefresh={this.onHeaderRefresh} />
-          
-
-
-        </View>
+        </List>
       );
     }
 }

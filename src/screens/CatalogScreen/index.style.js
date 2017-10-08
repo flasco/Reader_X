@@ -28,10 +28,6 @@ export default{
     backgroundColor: '#000',
     width: 90,
   },
-  SunnyModeContainer: {
-    flex:1,
-    backgroundColor: '#fff',
-  },
   divider: {
     height: 1,
     backgroundColor: '#dcdcdc',
@@ -42,12 +38,9 @@ export default{
   },
   itemContainerStyle:{
     height:50,
+    borderBottomWidth: 0,
     flexDirection:'row',
     backgroundColor: '#fff',
     alignItems:'center',
-  },
-
-  itemFontStyle:{
-    marginLeft: 13,
   },
 };

@@ -32,7 +32,6 @@ class OrginChangeScreen extends PureComponent {
       this.renderCompleteInfo = this.renderCompleteInfo.bind(this);
       this.renderCompleteRow = this.renderCompleteRow.bind(this);
       this.renderSeparator = this.renderSeparator.bind(this);
-      this.styles = styles;
     }
 
     componentDidMount(){
@@ -47,14 +46,14 @@ class OrginChangeScreen extends PureComponent {
 
     renderCompleteInfo(item) {
       return (
-        <View style={this.styles.item.info.container}>
-          <View style={[this.styles.item.info.text.container, this.styles.item.info.description.container]}>
-            <Text style={[this.styles.item.info.text.text]} numberOfLines={2} ellipsizeMode='tail'>
+        <View style={styles.item.info.container}>
+          <View style={[styles.item.info.text.container, styles.item.info.description.container]}>
+            <Text style={[styles.item.info.text.text]} numberOfLines={2} ellipsizeMode='tail'>
               {item.description}
             </Text>
           </View>
-          <View style={[this.styles.item.info.text.container, this.styles.item.info.authors.container]}>
-            <Text style={this.styles.item.info.text.text}>
+          <View style={[styles.item.info.text.container, styles.item.info.authors.container]}>
+            <Text style={styles.item.info.text.text}>
               {item.author}
             </Text>
           </View>
@@ -65,12 +64,12 @@ class OrginChangeScreen extends PureComponent {
     renderCompleteRow({ item: rowData, index }) {
       return (
         <ListItem
-          containerStyle={this.styles.item.container}
+          containerStyle={styles.item.container}
           hideChevron={ true }
-          leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.bookId}/180`}} style={this.styles.item.preview} />}
+          leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.bookId}/180`}} style={styles.item.preview} />}
           title={rowData.bookName}
-          titleStyle={this.styles.item.title.text}
-          titleContainerStyle={this.styles.item.title.container}
+          titleStyle={styles.item.title.text}
+          titleContainerStyle={styles.item.title.container}
           subtitle={this.renderCompleteInfo(rowData)} 
           onPress={() => this.props.screenProps.router.navigate(this.props.navigation, 'Book', rowData, NavigationActions.navigate({ routeName: 'Info', params: rowData }))}
         />
@@ -78,7 +77,7 @@ class OrginChangeScreen extends PureComponent {
     }
   
     renderSeparator() {
-      return <Divider style={this.styles.divider} />;
+      return <Divider style={styles.divider} />;
     }
 
     render() {

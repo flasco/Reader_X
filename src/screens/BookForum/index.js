@@ -23,7 +23,7 @@ class BookForum extends Component {
     this.state = {
       comments: [],
       fetchFlag: RefreshState.Idle,
-    }
+    };
 
     this.onFetch = this.onFetch.bind(this);
     this.onHeaderRefresh = this.onHeaderRefresh.bind(this);

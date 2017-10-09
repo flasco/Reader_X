@@ -22,7 +22,7 @@ export default{
     width: 94,
   },
   wrapper: {
-    backgroundColor: '#000',
+    backgroundColor: 'transparent',
   },
   button: {
     backgroundColor: '#000',

@@ -26,7 +26,7 @@ class Page extends Component {
 
     this.state = {
       loading: true,  // default loading show
-    }
+    };
   }
 
   async componentDidMount() {

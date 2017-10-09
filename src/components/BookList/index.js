@@ -121,9 +121,6 @@ class BookList extends Component {
           <Text style={this.styles.item.info.text.text}>
             {item.author}
           </Text>
-          <Text>
-
-          </Text>
         </View>
       </View>
     );

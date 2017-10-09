@@ -29,7 +29,9 @@ class ShelfScreen extends Component {
             type='entypo'
             color={theme.styles.navButton.color}
             underlayColor={theme.styles.navButton.underlayColor}
-            onPress={() => { }}
+            onPress={() => { 
+              screenProps.router.navigate(navigation, 'Search');
+            }}
           />
           <Icon
             containerStyle={theme.styles.navButtonContainer}
@@ -46,7 +48,6 @@ class ShelfScreen extends Component {
   };
   constructor(props) {
     super(props);
-
     this.renderFooter = this.renderFooter.bind(this);
   }
 

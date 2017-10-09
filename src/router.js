@@ -12,7 +12,7 @@ const getCurrentRoute = (navigationState) => {
     return getCurrentRoute(route);
   }
   return route;
-}
+};
 
 const _routes = Symbol('routes');
 const _current = Symbol('current');
@@ -55,7 +55,7 @@ class Router {
       NavigationActions.back({
         key: undefined,
       })
-    )
+    );
   }
 
 }

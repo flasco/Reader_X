@@ -20,6 +20,7 @@ import BookScreen from './BookScreen';
 import BookForum from './BookForum';
 import ReadScreen from './ReadScreen';
 import CatalogScreen from './CatalogScreen';
+import SearchScreen from'./SearchScreen';
 
 import { theme } from '../theme';
 
@@ -99,6 +100,9 @@ const MainNavigator = StackNavigator({
   History: {
     screen: HistoryScreen,
   },
+  Search: {
+    screen: SearchScreen,
+  }
 }, {
   mode: 'screen',
   headerMode: 'screen',

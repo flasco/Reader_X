@@ -108,10 +108,11 @@ class SearchX extends Component{
   }
   render(){
     return(
-      <View style={[{flexDirection: 'row',},theme.styles.navContainer]}>
+      <View style={[{flexDirection: 'row'},theme.styles.navContainer]}>
         <SearchBar
+          lightTheme
           onChangeText={(text) => this.setState({ text })}
-          containerStyle={[theme.styles.navContainer,{flex:7}]}
+          containerStyle={[theme.styles.navContainer,{flex:7,borderBottomWidth:0,borderTopWidth:0}]}
           inputStyle={{backgroundColor:'#fff'}}
           autoCorrect={false}
           icon={{ color: '#86939e', name: 'search' }}

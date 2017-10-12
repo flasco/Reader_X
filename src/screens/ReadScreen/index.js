@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { StyleSheet, Text, View, Dimensions, StatusBar, InteractionManager, LayoutAnimation } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, StatusBar, ActionSheetIOS, InteractionManager, LayoutAnimation } from 'react-native';
 
 import { Icon } from 'react-native-elements';
 import Toast from 'react-native-easy-toast';
@@ -9,12 +9,14 @@ import ViewPager from '../../components/ViewPager';
 import getContextArr from '../../utils/getContextArr';
 import BottomNav from '../../components/BottomNav';
 
-import { content,chapterList } from '../../services/book';
+import { content, chapterList } from '../../services/book';
 
 import styles from './index.style';
 
 const width = styles.width;
 const height = styles.height;
+
+let tht;
 
 class ReadItem extends PureComponent {
   constructor(props) {
@@ -59,7 +61,7 @@ class ReadScreen extends Component {
             type='MaterialIcons'
             color={styles.navButton.color}
             underlayColor={styles.navButton.underlayColor}
-            onPress={() => { }}
+            onPress={() => { tht.downChoose(); }}
           />
           <Icon
             containerStyle={styles.navButtonContainer}
@@ -93,8 +95,10 @@ class ReadScreen extends Component {
       currentItem: '', //作为章节内容的主要获取来源。
       isVisible: false, //判断导航栏是否应该隐藏
       goFlag: 0, //判断是前往上一章（-1）还是下一章（1）
-      recordNum:0
+      recordNum: 0
     };
+
+    tht = this;
 
     this.renderPage = this.renderPage.bind(this);
     this.getNextPage = this.getNextPage.bind(this);
@@ -102,10 +106,9 @@ class ReadScreen extends Component {
     this.getCurrentPage = this.getCurrentPage.bind(this);
     this.clickBoard = this.clickBoard.bind(this);
     this.getDataSource = this.getDataSource.bind(this);
-
+    this.downChoose = this.downChoose.bind(this);
 
     let book = this.props.navigation.state.params;
-
     this.currentBook = {
       bookName: book.bookName,
       bookId: book.bookId,
@@ -114,14 +117,13 @@ class ReadScreen extends Component {
     };
     // console.log(this.currentBook);
 
-    if(this.chapterList.length===0){
+    if (this.chapterList.length === 0) {
       console.log(this.currentBook.bookId);
-      this.fetchChapterList(this.currentBook.bookId,()=>{
+      this.fetchChapterList(this.currentBook.bookId, () => {
         console.log(this.chapterList);
-        this.fetchContent(this.chapterList[ this.state.recordNum ].chapterId,1);
+        this.fetchContent(this.chapterList[this.state.recordNum].chapterId, 1);
       });
     }
-    
   }
 
   renderPage(data, pageID) {
@@ -136,9 +138,9 @@ class ReadScreen extends Component {
   }
 
   async fetchContent(chapterId, direct) {
-    const { err, data } = await content(this.currentBook.bookId,chapterId);
+    const { err, data } = await content(this.currentBook.bookId, chapterId);
     console.log(data);
-    this.getDataSource(data.Data,()=>{
+    this.getDataSource(data.Data, () => {
       this.setState({
         goFlag: direct,
         loadFlag: false,
@@ -146,34 +148,53 @@ class ReadScreen extends Component {
     });
   }
 
-  async fetchChapterList(bookId,callback){
+  async fetchChapterList(bookId, callback) {
     const { err, data } = await chapterList(bookId);
-    for(let i = 0,j = data.length;i<j;i++){
-      data[i].isDownload = false ;//测试句
+    for (let i = 0, j = data.length; i < j; i++) {
+      data[i].isDownload = false;//测试句
     }
     this.chapterList = data;
     callback();
   }
 
+  downChoose() {
+    ActionSheetIOS.showActionSheetWithOptions({
+      options: ['缓存50章', '缓存150章', 'Cancel',],
+      cancelButtonIndex: 2,
+    },
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0: {//50章
+            // this.download_Chapter(50);
+            break;
+          }
+          case 1: {//150章
+            // this.download_Chapter(150);
+            break;
+          }
+        }
+      });
+  }
+
   getNextPage() {
-    if(this.state.recordNum >= this.chapterList.length - 1 ){
+    if (this.state.recordNum >= this.chapterList.length - 1) {
       console.log('到最后一页了...');
       return;
     }
-    let chapterId = this.chapterList[ ++this.state.recordNum ].chapterId;
-    this.setState({ loadFlag: true },()=>{
-      this.fetchContent( chapterId , 1);
+    let chapterId = this.chapterList[++this.state.recordNum].chapterId;
+    this.setState({ loadFlag: true }, () => {
+      this.fetchContent(chapterId, 1);
     });
   }
-  
+
   getPrevPage() {
-    if(this.state.recordNum <= 0 ) {
+    if (this.state.recordNum <= 0) {
       console.log('到第一页了了...');
       return;
     }
-    let chapterId = this.chapterList[ --this.state.recordNum ].chapterId;
-    this.setState({ loadFlag: true },()=>{
-      this.fetchContent( chapterId , -1);
+    let chapterId = this.chapterList[--this.state.recordNum].chapterId;
+    this.setState({ loadFlag: true }, () => {
+      this.fetchContent(chapterId, -1);
     });
   }
 
@@ -203,12 +224,12 @@ class ReadScreen extends Component {
     this.setState({ isVisible: !flag });
   }
 
-  getDataSource(currentContent,callback) {
+  getDataSource(currentContent, callback) {
     let arr = getContextArr(currentContent, width, height, 23);
     this.totalPage = arr.length;
     this.setState({
-      currentItem:arr,
-    },callback);
+      currentItem: arr,
+    }, callback);
   }
 
   render() {
@@ -221,7 +242,7 @@ class ReadScreen extends Component {
           animation={true} />
         {this.state.loadFlag ? (
           <Text style={styles.centr}>
-                Loading...</Text>) :
+            Loading...</Text>) :
           (<ViewPager
             dataSource={ViewDs.cloneWithPages(this.state.currentItem)}
             renderPage={this.renderPage}
@@ -233,11 +254,11 @@ class ReadScreen extends Component {
             locked={this.state.isVisible}
             Gpag={this.state.goFlag} />)}
         <Toast ref="toast" />
-        {this.state.isVisible && <BottomNav 
-          screenProps={this.props.screenProps} 
+        {this.state.isVisible && <BottomNav
+          screenProps={this.props.screenProps}
           navigation={this.props.navigation}
           chapterList={this.chapterList}
-          recordNum={this.state.recordNum+1}
+          recordNum={this.state.recordNum + 1}
           bookName={this.currentBook.bookName} />}
       </View>
     );

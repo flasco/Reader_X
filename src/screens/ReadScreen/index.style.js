@@ -1,41 +1,41 @@
 import { Dimensions } from 'react-native';
 
-const { height,width } = Dimensions.get('window');
+const { height, width } = Dimensions.get('window');
 
 export const containerColors = {
-  zhuishuGreen:'#a2cda6',
-  zhuishuX:'#a0a088',
-  zhuishuY:'#c4c4c4',
-  qidianwhite:'#fff',
-  qidianRockYellow:'#e8e1b7',
-  qidianGreen:'#cde9d3',
-  qidianPink:'#ffc4c7',
-  qidianX:'#e4d2a1',
-  qidianY:'#f3deae',
+  zhuishuGreen: '#a2cda6',
+  zhuishuX: '#a0a088',
+  zhuishuY: '#c4c4c4',
+  qidianwhite: '#fff',
+  qidianRockYellow: '#e8e1b7',
+  qidianGreen: '#cde9d3',
+  qidianPink: '#ffc4c7',
+  qidianX: '#e4d2a1',
+  qidianY: '#f3deae',
 
 };
 
 export const fontColors = {
-  qidianGreen:'#2e3e23',
-  zhuishuGreen:'#0d2a0f',
+  qidianGreen: '#2e3e23',
+  zhuishuGreen: '#0d2a0f',
 };
 
 export const bottomColors = {
-  qidianGreen:'#7b9480',
-  zhuishuGreen:'#6e8975',
+  qidianGreen: '#7b9480',
+  zhuishuGreen: '#6e8975',
 };
 
 export const darkColor = {
-  darkConColor:'#1c1c1c',
-  darkFontColor:'#707070',
-  darkBottomColor:'#575757',
+  darkConColor: '#1c1c1c',
+  darkFontColor: '#707070',
+  darkBottomColor: '#575757',
 
 };
 
 export default {
-  width : width,
-  height : height,
-  navRightContainer:{
+  width: width,
+  height: height,
+  navRightContainer: {
     marginRight: 10,
     flexDirection: 'row',
   },
@@ -46,31 +46,31 @@ export default {
     color: 'white',
     underlayColor: 'transparent',
   },
-  SunnyModeContainer : {
+  SunnyModeContainer: {
     flex: 1,
     backgroundColor: containerColors.zhuishuGreen,
   },
-  MoonModeContainer : {
+  MoonModeContainer: {
     flex: 1,
     backgroundColor: darkColor.darkConColor,
   },
-  SunnyMode:{
-    Title:{
+  SunnyMode: {
+    Title: {
       color: bottomColors.zhuishuGreen,
     },
-    Text:{
+    Text: {
       color: fontColors.zhuishuGreen,
     }
   },
 
-  MoonMode:{
-    Title:{
+  MoonMode: {
+    Title: {
       color: darkColor.darkFontColor,
     },
-    Text:{
+    Text: {
       color: darkColor.darkFontColor,
     },
-    Bottom:{
+    Bottom: {
       color: darkColor.darkBottomColor,
     }
   },
@@ -82,26 +82,26 @@ export default {
     fontSize: 18,
   },
 
-  title : {
+  title: {
     marginTop: 8,
     paddingLeft: 20
   },
-  bottom1 : {
+  bottom1: {
     flex: 1,
     textAlign: 'left',
     marginLeft: 25
   },
-  bottom2 : {
+  bottom2: {
     flex: 1,
     textAlign: 'right',
     marginRight: 25
   },
-  bottView : {
+  bottView: {
     flexDirection: 'row',
     marginBottom: 21
   },
-  textsize : {
-    textAlign:'justify',
+  textsize: {
+    textAlign: 'justify',
     flex: 1,
     marginTop: 12,
     marginLeft: 18,
@@ -109,7 +109,7 @@ export default {
     fontStyle: 'normal',
     lineHeight: 35,
   },
-  bookCont:{
-    marginRight:14,
+  bookCont: {
+    marginRight: 14,
   },
 };

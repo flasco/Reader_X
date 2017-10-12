@@ -9,29 +9,29 @@ export const RefreshState = {
   Failure: 4,
 };
 
-const DEBUG = false;
-const log = (text) => { DEBUG && console.log(text); };
+// const DEBUG = false;
+// const log = (text) => { DEBUG && console.log(text); };
 
 class RefreshFlatList extends PureComponent {
   componentWillReceiveProps(nextProps) {
-    log('[RefreshFlatList]  RefreshFlatList componentWillReceiveProps ' + nextProps.refreshState);
+    // log('[RefreshFlatList]  RefreshFlatList componentWillReceiveProps ' + nextProps.refreshState);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    log('[RefreshFlatList]  RefreshFlatList componentDidUpdate ' + prevProps.refreshState);
+    // log('[RefreshFlatList]  RefreshFlatList componentDidUpdate ' + prevProps.refreshState);
   }
 
   onHeaderRefresh = () => {
-    log('[RefreshFlatList]  onHeaderRefresh');
+    // log('[RefreshFlatList]  onHeaderRefresh');
 
     if (this.shouldStartHeaderRefreshing()) {
-      log('[RefreshFlatList]  onHeaderRefresh');
+      // log('[RefreshFlatList]  onHeaderRefresh');
       this.props.onHeaderRefresh(RefreshState.HeaderRefreshing);
     }
   }
 
   shouldStartHeaderRefreshing = () => {
-    log('[RefreshFlatList]  shouldStartHeaderRefreshing');
+    // log('[RefreshFlatList]  shouldStartHeaderRefreshing');
 
     if (this.props.refreshState == RefreshState.HeaderRefreshing) {
       return false;
@@ -41,7 +41,7 @@ class RefreshFlatList extends PureComponent {
   }
 
   render() {
-    log('[RefreshFlatList]  render');
+    // log('[RefreshFlatList]  render');
 
     return (
       <FlatList
@@ -64,7 +64,7 @@ RefreshFlatList.propTypes = {
 };
 
 RefreshFlatList.defaultProps = {
-  onHeaderRefresh: () => {},
+  onHeaderRefresh: () => { },
 };
 
 export default RefreshFlatList;

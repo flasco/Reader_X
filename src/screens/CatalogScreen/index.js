@@ -12,23 +12,22 @@ import { chapterList } from '../../services/book';
 
 class CatalogScreen extends PureComponent {  
     static navigationOptions = ({ navigation, screenProps }) => {
-      const callback = () => {
-        alert('sort');
-      };
+      let toEnd = true;
       return {
         title: `${navigation.state.params.bookName}`,
-
         headerRight: (
           <View style={styles.navRightContainer}>
             <Button
-              containerViewStyle={styles.wrapper}
               buttonStyle={styles.button}
               color={'#fff'}
-              title='正序'
+              title='顶底直达'
               fontSize={16}
-              leftIcon={{ name: 'swap-vert', type:'MaterialIcons', color: '#fff', style: styles.chevron }}
               onPress={() => {
-                screenProps.a();
+                let flatLst = navigation.state.params.that.refs.lst1.refs.lst2;
+                toEnd?flatLst.scrollToEnd():flatLst.scrollToIndex({ viewPosition: 0.5, index: 0 });
+                toEnd = !toEnd;
+                
+
               }}
             />
           </View>
@@ -39,11 +38,12 @@ class CatalogScreen extends PureComponent {
     constructor(props) {
       super(props);
       this.currentChapterId = this.props.navigation.state.params.bookNum || 1;
-      // console.log(this.currentChapterId);
       this.state = {
         bookList:[],
         fetchFlag:0,
       };
+
+      this.props.navigation.state.params.that = this;
 
       this.renderSeparator = this.renderSeparator.bind(this);
       this.onHeaderRefresh = this.onHeaderRefresh.bind(this);
@@ -100,11 +100,14 @@ class CatalogScreen extends PureComponent {
         <List style={{flex:1}} >
           <RefreshFlatList
             style={{backgroundColor:'#eeeeee'}}
+            ref={'lst1'}
+            listRef={'lst2'}
             data = {this.state.bookList}
             renderItem={this.renderRow}
             ItemSeparatorComponent={this.renderSeparator}
             keyExtractor={(item, index) => item.id}
             refreshState={this.state.fetchFlag}
+            getItemLayout={(data, index) => ({ length: 50, offset: 51 * index, index })}//行高38，分割线1，所以offset=39
             onHeaderRefresh={this.onHeaderRefresh} />
         </List>
       );

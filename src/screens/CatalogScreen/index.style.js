@@ -19,14 +19,11 @@ export default{
     marginRight: 0,
   },
   navRightContainer: {
-    width: 94,
-  },
-  wrapper: {
-    backgroundColor: 'transparent',
+    width: 106,
   },
   button: {
-    backgroundColor: '#000',
-    width: 90,
+    backgroundColor: 'transparent',
+    width: 96,
   },
   divider: {
     height: 1,

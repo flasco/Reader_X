@@ -85,6 +85,7 @@ class ShelfScreen extends Component {
             // navigate to read page.
             this.props.screenProps.router.navigate(this.props.navigation, 'Book', item, NavigationActions.navigate({ routeName: 'Read', params: item }));
           }}
+          keyExtractor={(item, index) => item.BookId}
         />
       </Page>
     );

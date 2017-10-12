@@ -97,12 +97,12 @@ class BookList extends Component {
       <View style={this.styles.item.info.container}>
         <View style={this.styles.item.info.text.container}>
           <Text style={this.styles.item.info.text.text}>
-            {item.author}
+            {item.Author}
           </Text>
         </View>
         <View style={this.styles.item.info.text.container}>
           <Text style={this.styles.item.info.text.text}>
-            {item.lastUpdateChapterName}
+            {item.LastUpdateChapterName}
           </Text>
         </View>
       </View>
@@ -114,12 +114,12 @@ class BookList extends Component {
       <View style={this.styles.item.info.container}>
         <View style={[this.styles.item.info.text.container, this.styles.item.info.description.container]}>
           <Text style={[this.styles.item.info.text.text]} numberOfLines={2} ellipsizeMode='tail'>
-            {item.description}
+            {item.Description}
           </Text>
         </View>
         <View style={[this.styles.item.info.text.container, this.styles.item.info.authors.container]}>
           <Text style={this.styles.item.info.text.text}>
-            {item.author}
+            {item.Author}
           </Text>
         </View>
       </View>
@@ -131,8 +131,8 @@ class BookList extends Component {
       <ListItem
         containerStyle={this.styles.item.container}
         hideChevron={ true }
-        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.bookId}/180`}} style={this.styles.item.preview} />}
-        title={rowData.bookName}
+        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.BookId}/180`}} style={this.styles.item.preview} />}
+        title={rowData.BookName}
         titleStyle={this.styles.item.title.text}
         titleContainerStyle={this.styles.item.title.container}
         subtitle={this.renderSimpleInfo(rowData)} 
@@ -146,8 +146,8 @@ class BookList extends Component {
       <ListItem
         containerStyle={this.styles.item.container}
         hideChevron={ true }
-        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.bookId}/180`}} style={this.styles.item.preview} />}
-        title={rowData.bookName}
+        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.BookId}/180`}} style={this.styles.item.preview} />}
+        title={rowData.BookName}
         titleStyle={this.styles.item.title.text}
         titleContainerStyle={this.styles.item.title.container}
         subtitle={this.renderCompleteInfo(rowData)} 
@@ -174,6 +174,7 @@ class BookList extends Component {
     return <Divider style={this.styles.divider} />;
   }
 
+
   render() {
     return (
       <List style={this.styles.list.container}>
@@ -182,7 +183,6 @@ class BookList extends Component {
           data={this.state.booklist}
           renderItem={this.renderRow}
           ItemSeparatorComponent={this.renderSeparator}
-          keyExtractor={(item, index) => item.bookId}
           refreshState={this.state.fetchFlag}
           onHeaderRefresh={this.onHeaderRefresh}
         />

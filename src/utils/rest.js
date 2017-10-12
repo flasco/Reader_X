@@ -87,7 +87,7 @@ async function rest(url, options = {}) {
   const { data, err } = await request(url, {
     ...options,
     headers: {
-      'Authorization': access_token != null ? `Bearer ${access_token}` : 'Basic VWpkeXc3MzY9Og==', // could be overrided by options.headers.Authorization
+      // 'Authorization': access_token != null ? `Bearer ${access_token}` : 'Basic VWpkeXc3MzY9Og==', // could be overrided by options.headers.Authorization
       ...options.headers,
     }
   });
@@ -97,13 +97,15 @@ async function rest(url, options = {}) {
   }
 
   const error = await parseError(err);
+  // console.log(error);
   return { err: error };
 }
 
 
 
 async function GET(url, params) {
-  return await rest(`${url}${isBlank(params) ? '' : querystring.stringify(params)}`);
+  // console.log(`${url}${isBlank(params) ? '' : `?${querystring.stringify(params)}`}`)
+  return await rest(`${url}${isBlank(params) ? '' : `?${querystring.stringify(params)}`}`);
 }
 
 async function POST(url, data) {

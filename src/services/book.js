@@ -1,7 +1,9 @@
 import rest, { GET, POST, PUT } from '../utils/rest';
 
+const ServerIp = 'http://120.27.35.223:3000';
+
 export async function list() {
-  return await GET('/api/v1/books');
+  return await GET(ServerIp + '/api/v1/books');
 }
 
 export async function history() {

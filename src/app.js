@@ -6,8 +6,8 @@ import FetchMock from 'react-native-fetch-mock';
 import ThemeProvider, { theme } from './theme';
 
 // mock data
-const fetch = new FetchMock(require('../__mocks__')).fetch;
-global.fetch = fetch;
+// const fetch = new FetchMock(require('../__mocks__')).fetch;
+// global.fetch = fetch;
 
 export default (props) => {
   return (

@@ -114,7 +114,7 @@ class BookScreen extends Component {
   }
 
   async onFetch() {
-    const { err, data } = await item(this.props.navigation.state.params.bookId);
+    const { err, data } = await item(this.props.navigation.state.params.BookId);
     if (err) {
       return;
     }

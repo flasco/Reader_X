@@ -133,8 +133,8 @@ class SearchScreen extends PureComponent {
           booklist={this.state.result}
           ListFooterComponent={this.renderFooter}
 
-          onItemClicked={(index) => {
-            this.props.screenProps.router.navigate(this.props.navigation, 'Book', {}, NavigationActions.navigate({ routeName: 'Info', params: {} }));
+          onItemClicked={(item, index) => {
+            this.props.screenProps.router.navigate(this.props.navigation, 'Book', item, NavigationActions.navigate({ routeName: 'Info', params: item }));
           }}
           onEndReached={() => {
             this.state.pageIndex > 1 && this.fetchData(this.state.searchText, this.state.pageIndex);

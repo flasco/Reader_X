@@ -160,7 +160,7 @@ class BookList extends Component {
         titleStyle={this.styles.item.title.text}
         titleContainerStyle={this.styles.item.title.container}
         subtitle={this.renderCompleteInfo(rowData)} 
-        onPress={() => onPress(rowData)}
+        onPress={() => onPress(rowData, index)}
       />
     );
   }

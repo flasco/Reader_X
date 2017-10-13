@@ -1,131 +1,53 @@
-import React, { Component,PureComponent } from 'react';
-import {  Text, View ,FlatList,Image } from 'react-native';
+import React, { Component, PureComponent } from 'react';
+import { Text, View, FlatList, Image } from 'react-native';
 
 import { StackNavigator } from 'react-navigation';
-import { Button,Divider,ListItem,List,SearchBar } from 'react-native-elements';
+import { Button, Divider, ListItem, List, SearchBar } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 
 // import styles from './index.style';
 import { theme } from '../../theme';
 
-import RefreshFlatList from '../../components/RefreshFlatList'; 
-import { chapterList } from '../../services/book';
-import BookList , { BookListType } from '../../components/BookList';
-import { history } from '../../services/book';
+import Page from '../../components/Page';
+import { RefreshState } from '../../components/RefreshFlatList';
+import BookList, { BookListType } from '../../components/BookList';
+
+import { list } from '../../services/book';
 
 import styles from './index.style';
 
-class OrginChangeScreen extends PureComponent {  
-    static navigationOptions = ({ navigation, screenProps }) => {
-      return {
-        header:null,
-      };
-    }
-    constructor(props) {
-      super(props);
-      
-      this.state = {
-        dataSource: '',
-      };
-
-      this.TextSearch = this.TextSearch.bind(this);
-      this.renderCompleteInfo = this.renderCompleteInfo.bind(this);
-      this.renderCompleteRow = this.renderCompleteRow.bind(this);
-      this.renderSeparator = this.renderSeparator.bind(this);
-    }
-
-    componentDidMount(){
-    }
-
-    async TextSearch(text){
-      const { err, data } = await history();
-      this.setState({
-        dataSource:data,
-      },()=>{ console.log(this.state.dataSource); });
-    }
-
-    renderCompleteInfo(item) {
-      return (
-        <View style={styles.item.info.container}>
-          <View style={[styles.item.info.text.container, styles.item.info.description.container]}>
-            <Text style={[styles.item.info.text.text]} numberOfLines={2} ellipsizeMode='tail'>
-              {item.description}
-            </Text>
-          </View>
-          <View style={[styles.item.info.text.container, styles.item.info.authors.container]}>
-            <Text style={styles.item.info.text.text}>
-              {item.author}
-            </Text>
-          </View>
-        </View>
-      );
-    }
-  
-    renderCompleteRow({ item: rowData, index }) {
-      return (
-        <ListItem
-          containerStyle={styles.item.container}
-          hideChevron={ true }
-          leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.bookId}/180`}} style={styles.item.preview} />}
-          title={rowData.bookName}
-          titleStyle={styles.item.title.text}
-          titleContainerStyle={styles.item.title.container}
-          subtitle={this.renderCompleteInfo(rowData)} 
-          onPress={() => this.props.screenProps.router.navigate(this.props.navigation, 'Book', rowData, NavigationActions.navigate({ routeName: 'Info', params: rowData }))}
-        />
-      );
-    }
-  
-    renderSeparator() {
-      return <Divider style={styles.divider} />;
-    }
-
-    render() {
-      return (
-        <View style={{flex:1}}>
-          <View style={[{height:16,backgroundColor:'#fff'},theme.styles.navContainer]}/>
-          <SearchX
-            screenProps={this.props.screenProps}
-            navigation={this.props.navigation}
-            TextSearch={this.TextSearch}/>
-          <FlatList
-            data={this.state.dataSource}
-            style={{backgroundColor:'#fff',flex:1}}
-            renderItem={this.renderCompleteRow}
-            ItemSeparatorComponent={this.renderSeparator}
-            keyExtractor={(item, index) => item.bookId} />
-        </View>
-      );
-    }
-}
-
-class SearchX extends Component{
-  constructor(props){
+class SearchX extends Component {
+  constructor(props) {
     super(props);
-    this.state={
-      text:'',
+    this.state = {
+      text: '',
     };
   }
-  render(){
-    return(
-      <View style={[{flexDirection: 'row'},theme.styles.navContainer]}>
+
+  render() {
+    return (
+      <View style={[{ flexDirection: 'row' }, theme.styles.navContainer]}>
         <SearchBar
           lightTheme
-          onChangeText={(text) => this.setState({ text })}
-          containerStyle={[theme.styles.navContainer,{flex:7,borderBottomWidth:0,borderTopWidth:0}]}
-          inputStyle={{backgroundColor:'#fff'}}
-          autoCorrect={false}
+          containerStyle={[theme.styles.navContainer, { flex: 7, borderBottomWidth: 0, borderTopWidth: 0 }]}
+          inputStyle={{ backgroundColor: '#fff' }}
           icon={{ color: '#86939e', name: 'search' }}
-          onSubmitEditing={()=>{
-            this.props.TextSearch(this.state.text);
-          }}
+          autoCorrect={false}
           returnKeyType='search'
-          placeholder='输入关键字' />
-        <Button style={{flex:1,width:20,justifyContent:'center',marginLeft:12,alignItems:'center'}}
+          placeholder='输入关键字'
+          showLoadingIcon={this.props.loading}
+
+          onChangeText={(text) => this.setState({ text })}
+          onSubmitEditing={() => {
+            this.props.textSearch(this.state.text);
+          }}
+        />
+        <Button style={{ flex: 1, width: 20, justifyContent: 'center', marginLeft: 12, alignItems: 'center' }}
           title='取消'
           containerViewStyle={theme.styles.navContainer}
-          buttonStyle={{backgroundColor:'transparent'}}
-          onPress={()=>{
+          buttonStyle={{ backgroundColor: 'transparent' }}
+
+          onPress={() => {
             this.props.screenProps.router.goBack(this.props.navigation);
           }}
         />
@@ -134,7 +56,93 @@ class SearchX extends Component{
   }
 }
 
+class SearchScreen extends PureComponent {
+  static navigationOptions = ({ navigation, screenProps }) => {
+    return {
+      header: null,
+    };
+  }
 
+  constructor(props) {
+    super(props);
 
+    this.state = {
+      searchText: '',
+      result: [],
+      loading: false,
+      loadFlag: RefreshState.Idle,
+      pageIndex: 1,
+    };
 
-export default OrginChangeScreen;
+    this.fetchData = this.fetchData.bind(this);
+    this.bookSearch = this.bookSearch.bind(this);
+  }
+
+  async fetchData(text, pageIndex) {
+    this.state.loadFlag === RefreshState.Idle && this.setState({
+      searchText: text,
+      loading: true,
+    }, async () => {
+      const { data, err } = await list(text, pageIndex);
+
+      if (err) {
+        // 搜索失败
+        this.setState({
+          searchText: '',
+          loading: false,
+          loadFlag: RefreshState.Failure,
+        });
+        return false;
+      }
+
+      this.setState({
+        searchText: '',
+        result: [...this.state.result, ...data],
+        loading: false,
+        loadFlag: RefreshState.Idle,
+        pageIndex: this.state.pageIndex + 1,
+      });
+    });
+  }
+
+  async bookSearch(text) {
+    this.setState({
+      result: [],
+      loading: false,
+      loadFlag: RefreshState.Idle,
+      pageIndex: 1,
+    }, () => {
+      this.fetchData(text, this.state.pageIndex);
+    });
+  }
+
+  render() {
+    return (
+      <Page>
+        <View style={[{ height: 16, backgroundColor: '#fff' }, theme.styles.navContainer]} />
+        <SearchX
+          screenProps={this.props.screenProps}
+          navigation={this.props.navigation}
+          textSearch={this.bookSearch}
+          loading={this.state.loading}
+        />
+        <BookList
+          keyExtractor={(item, index) => item.BookId}
+          dynamic={false}
+          type={BookListType.Complete}
+          booklist={this.state.result}
+          ListFooterComponent={this.renderFooter}
+
+          onItemClicked={(index) => {
+            this.props.screenProps.router.navigate(this.props.navigation, 'Book', {}, NavigationActions.navigate({ routeName: 'Info', params: {} }));
+          }}
+          onEndReached={() => {
+            this.state.pageIndex > 1 && this.fetchData(this.state.searchText, this.state.pageIndex);
+          }}
+        />
+      </Page>
+    );
+  }
+}
+
+export default SearchScreen;

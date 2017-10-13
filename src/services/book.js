@@ -2,8 +2,11 @@ import rest, { GET, POST, PUT } from '../utils/rest';
 
 const ServerIp = 'https://book.whatakitty.com';
 
-export async function list() {
-  return await GET(ServerIp + '/api/v1/books');
+export async function list(key, pageIndex = 1) {
+  return await GET(ServerIp + '/api/v1/books', {
+    key,
+    pageIndex,
+  });
 }
 
 export async function history() {

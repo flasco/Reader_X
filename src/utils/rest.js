@@ -104,7 +104,6 @@ async function rest(url, options = {}) {
 
 
 async function GET(url, params) {
-  // console.log(`${url}${isBlank(params) ? '' : `?${querystring.stringify(params)}`}`)
   return await rest(`${url}${isBlank(params) ? '' : `?${querystring.stringify(params)}`}`);
 }
 

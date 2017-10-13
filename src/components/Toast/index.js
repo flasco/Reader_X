@@ -8,7 +8,7 @@
 
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {StyleSheet, View, Animated, Dimensions, Text} from 'react-native';
+import {StyleSheet, View, Animated, Dimensions, Text, ViewPropTypes} from 'react-native';
 
 export const DURATION = {
   LENGTH_LONG: 2000,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
 });
 
 Toast.propTypes = {
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   position: PropTypes
     .oneOf(['top', 'center', 'bottom']),
   bot: PropTypes.number,

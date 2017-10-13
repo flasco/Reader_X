@@ -28,12 +28,13 @@ class BottomNav extends Component {
             chapterList: this.props.chapterList,
             bookName: this.props.bookName,
             bookNum: this.props.recordNum,
-            callback: (chapterId) => {
-              console.log(chapterId)
-              this.props.getContent(chapterId);
+            callback: (chapterId,index) => {
+              console.log(`${chapterId}   ${index} `);
+              this.props.getContent(chapterId,index);
             }
           };
-          console.log('bookNum:' + this.props.recordNum);
+          // console.log('bookNum:' + this.props.recordNum);
+          // this.props.cleanMenu();
           this.props.screenProps.router.navigate(this.props.navigation, 'Book', {}, NavigationActions.navigate({ routeName: 'Catalog', params: item }));
         }}>
           <Icon

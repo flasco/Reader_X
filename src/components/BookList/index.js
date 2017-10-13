@@ -93,16 +93,17 @@ class BookList extends Component {
   }
 
   renderSimpleInfo(item) {
+    // console.log(item);
     return (
       <View style={this.styles.item.info.container}>
         <View style={this.styles.item.info.text.container}>
           <Text style={this.styles.item.info.text.text}>
-            {item.Author}
+            {item.author}
           </Text>
         </View>
         <View style={this.styles.item.info.text.container}>
           <Text style={this.styles.item.info.text.text}>
-            {item.LastUpdateChapterName}
+            {item.lastUpdateChapterName}
           </Text>
         </View>
       </View>
@@ -114,12 +115,12 @@ class BookList extends Component {
       <View style={this.styles.item.info.container}>
         <View style={[this.styles.item.info.text.container, this.styles.item.info.description.container]}>
           <Text style={[this.styles.item.info.text.text]} numberOfLines={2} ellipsizeMode='tail'>
-            {item.Description}
+            {item.description}
           </Text>
         </View>
         <View style={[this.styles.item.info.text.container, this.styles.item.info.authors.container]}>
           <Text style={this.styles.item.info.text.text}>
-            {item.Author}
+            {item.author}
           </Text>
         </View>
       </View>
@@ -131,12 +132,12 @@ class BookList extends Component {
       <ListItem
         containerStyle={this.styles.item.container}
         hideChevron={ true }
-        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.BookId}/180`}} style={this.styles.item.preview} />}
-        title={rowData.BookName}
+        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.bookId}/180`}} style={this.styles.item.preview} />}
+        title={rowData.bookName}
         titleStyle={this.styles.item.title.text}
         titleContainerStyle={this.styles.item.title.container}
         subtitle={this.renderSimpleInfo(rowData)} 
-        onPress={() => onPress(rowData)}
+        onPress={() => onPress(index)}
       />
     );
   }
@@ -146,8 +147,8 @@ class BookList extends Component {
       <ListItem
         containerStyle={this.styles.item.container}
         hideChevron={ true }
-        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.BookId}/180`}} style={this.styles.item.preview} />}
-        title={rowData.BookName}
+        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.bookId}/180`}} style={this.styles.item.preview} />}
+        title={rowData.bookName}
         titleStyle={this.styles.item.title.text}
         titleContainerStyle={this.styles.item.title.container}
         subtitle={this.renderCompleteInfo(rowData)} 
@@ -200,7 +201,7 @@ BookList.propTypes = {
 };
 
 BookList.defaultProps = {
-  datasource: list,
+  // datasource: list,
   type: BookListType.Complete,
   onItemClicked: () => {},
 };

@@ -5,6 +5,7 @@ import {
   StatusBar,
   Text,
   Image,
+  AsyncStorage,
 } from 'react-native';
 
 import { Icon, Button } from 'react-native-elements';
@@ -13,6 +14,9 @@ import { NavigationActions } from 'react-navigation';
 import Page from '../../components/Page';
 import Toast from '../../components/Toast';
 import BookList, { BookListType } from '../../components/BookList';
+
+import { list } from '../../services/book';
+
 
 import { theme } from '../../theme';
 import styles from './index.style';
@@ -29,7 +33,7 @@ class ShelfScreen extends Component {
             type='entypo'
             color={theme.styles.navButton.color}
             underlayColor={theme.styles.navButton.underlayColor}
-            onPress={() => { 
+            onPress={() => {
               screenProps.router.navigate(navigation, 'Search');
             }}
           />
@@ -49,6 +53,37 @@ class ShelfScreen extends Component {
   constructor(props) {
     super(props);
     this.renderFooter = this.renderFooter.bind(this);
+    this.onFetch = this.onFetch.bind(this);
+    this.bookLst ;
+    // AsyncStorage.clear();
+  }
+
+  async onFetch() {
+    try {
+      this.bookLst = JSON.parse(await AsyncStorage.getItem('@Reader_X:bookLst'));
+      // console.log(this.bookLst);
+      if (this.bookLst) return this.bookLst;
+
+      const { data, err } = await list();
+      let dataX = [];
+      for (let i = 0, j = data.length; i < j; i++) {
+        dataX[i] = {
+          bookName: data[i].BookName,
+          bookId: data[i].BookId,
+          author: data[i].Author,
+          lastUpdateChapterName: data[i].LastUpdateChapterName,
+          description: data[i].Description,
+          source: 'bqg',
+          recordNum: 0,
+          recordPage: 1,
+        };
+      }
+      this.bookLst = {data: dataX};
+      AsyncStorage.setItem('@Reader_X:bookLst', JSON.stringify( this.bookLst ));
+      return { data: dataX, err };
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   renderFooter() {
@@ -79,13 +114,18 @@ class ShelfScreen extends Component {
           bot={30} />
         <BookList
           type={BookListType.Simple}
+          datasource={this.onFetch}
           ListFooterComponent={this.renderFooter}
           extraData={theme.styles.variables.colors.main}  // 设置主题色（如果不设置则无法触发list刷新DOM）
-          onItemClicked={(item) => {
-            // navigate to read page.
+          onItemClicked={(index) => {
+            console.log(index);
+            let item = {
+              fir:index,
+              sec:this.bookLst
+            }
             this.props.screenProps.router.navigate(this.props.navigation, 'Book', item, NavigationActions.navigate({ routeName: 'Read', params: item }));
           }}
-          keyExtractor={(item, index) => item.BookId}
+          keyExtractor={(item, index) => item.bookId}
         />
       </Page>
     );

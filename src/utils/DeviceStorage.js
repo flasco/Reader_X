@@ -4,40 +4,57 @@ import {
 } from 'react-native';
 
 export default class DeviceStorage {
-  static get(key) {
-    return AsyncStorage.getItem(key).then((value) => {
-      const jsonValue = JSON.parse(value);
-      return jsonValue;
-    });
+  static async get(key) {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      return ({data: JSON.parse(value)})
+    } catch (err) {
+      return ({err})
+    }
   }
 
-  static getString(key) {
-    return AsyncStorage.getItem(key).then((value) => {
-      return value;
-    });
+  static async getString(key) {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      return ({data: value})
+    } catch (err) {
+      return ({err})
+    }
   }
 
-  static save(key, value) {
-    return AsyncStorage.setItem(key, JSON.stringify(value));
+  static async save(key, value) {
+    try {
+      await AsyncStorage.setItem(key, JSON.stringify(value));
+      return ({})
+    } catch (err) {
+      return ({err})
+    }
   }
 
-  static saveString(key, value) {
-    return AsyncStorage.setItem(key, value);
+  static async saveString(key, value) {
+    try {
+      const value = await AsyncStorage.setItem(key, value);
+      return ({})
+    } catch (err) {
+      return ({err})
+    }
   }
 
-  static update(key, value) {
-    return DeviceStorage.get(key).then((item) => {
-      value = typeof value === 'string' ? value : Object.assign({}, item, value);
-      return AsyncStorage.setItem(key, JSON.stringify(value));
-    });
+  static async clear(key) {
+    try {
+      const value = await AsyncStorage.removeItem(key);
+      return ({data: value})
+    } catch (err) {
+      return ({err})
+    }
   }
 
-  static clear(key) {
-    return AsyncStorage.removeItem(key).then(val => { return val; });
-  }
-
-  static cleanAll() {
-    return AsyncStorage.clear();
+  static async cleanAll() {
+    try {
+      await AsyncStorage.clear();
+    } catch (err) {
+      return ({err})
+    }
   }
 
 }

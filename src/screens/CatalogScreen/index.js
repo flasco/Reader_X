@@ -63,7 +63,7 @@ class CatalogScreen extends PureComponent {
     });
     setTimeout(() => {
       tht.refs.lst1.refs.lst2.scrollToIndex({ viewPosition: 0.5, index: this.currentChapterIndex });
-    }, 850);
+    }, 250);
   }
 
   async fetchChapterLst(bookId, direct) {
@@ -99,7 +99,7 @@ class CatalogScreen extends PureComponent {
         hideChevron={true}
         title={item.item.title}
         onPress = {()=>{
-          this.props.navigation.state.params.callback(item.item.chapterId);
+          this.props.navigation.state.params.callback(item.item.chapterId,item.index);
           this.props.screenProps.router.goBack(this.props.navigation);
         }}
         titleStyle={[itemColor, { fontSize: 15 }]}
@@ -126,7 +126,6 @@ class CatalogScreen extends PureComponent {
     );
   }
 }
-
 
 
 export default CatalogScreen;

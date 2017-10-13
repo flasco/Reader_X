@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { StyleSheet, Text, View, Dimensions, StatusBar, ActionSheetIOS, InteractionManager, LayoutAnimation } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, StatusBar, ActionSheetIOS, AsyncStorage, LayoutAnimation } from 'react-native';
 
 import { Icon } from 'react-native-elements';
 import Toast from 'react-native-easy-toast';
@@ -16,7 +16,7 @@ import styles from './index.style';
 const width = styles.width;
 const height = styles.height;
 
-let tht;
+let tht, bookLst, bookMap;
 
 class ReadItem extends PureComponent {
   constructor(props) {
@@ -39,7 +39,7 @@ class ReadItem extends PureComponent {
 
 class ReadScreen extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
-    const showHeader = navigation.state.params.showHeeader ? {} : { header: null };
+    let showHeader = navigation.state.params.showHeader ? {} : { header: null };
     return {
       title: '',
       headerStyle: {
@@ -86,16 +86,26 @@ class ReadScreen extends Component {
   }
   constructor(props) {
     super(props);
+    this.novelList = props.navigation.state.params.sec.data;
+    console.log(props.navigation.state.params.sec);
+    this.novelNum = props.navigation.state.params.fir;
+    this.currentBook = this.novelList[this.novelNum];
+    console.log(this.currentBook)
     this.totalPage = 1;
-    this.currentBook = {};
-    this.chapterList = [];
+    this.chapterList;
+    this.chapterContentMap;
+
+    bookMap = `@Reader_X:${this.currentBook.bookId}_${this.currentBook.source}_Map`;
+    bookLst = `@Reader_X:${this.currentBook.bookId}_${this.currentBook.source}_Lst`;
+    // console.log(this.currentBook)
     this.state = {
       currentNum: 1, //props.navigation.state.params.bookNum,
       loadFlag: true, //判断是出于加载状态还是显示状态
       currentItem: '', //作为章节内容的主要获取来源。
       isVisible: false, //判断导航栏是否应该隐藏
       goFlag: 0, //判断是前往上一章（-1）还是下一章（1）
-      recordNum: 0
+      recordNum: this.currentBook.recordNum,//记录章节index
+      recordPage: this.currentBook.recordPage,//记录读到的page
     };
 
     tht = this;
@@ -107,22 +117,25 @@ class ReadScreen extends Component {
     this.clickBoard = this.clickBoard.bind(this);
     this.getDataSource = this.getDataSource.bind(this);
     this.downChoose = this.downChoose.bind(this);
+    this.getContent = this.getContent.bind(this);
+    this.getMapAndLst = this.getMapAndLst.bind(this);
 
-    let book = this.props.navigation.state.params;
-    this.currentBook = {
-      bookName: book.bookName,
-      bookId: book.bookId,
-      // recordNum:0, //这个是记录最后一次看书的章节，下面的是页数
-      // recordPage: book.recordPage,
-    };
-    // console.log(this.currentBook);
 
-    if (this.chapterList.length === 0) {
-      console.log(this.currentBook.bookId);
-      this.fetchChapterList(this.currentBook.bookId, () => {
-        console.log(this.chapterList);
-        this.fetchContent(this.chapterList[this.state.recordNum].chapterId, 1);
-      });
+    // AsyncStorage.clear();
+    this.getMapAndLst();
+
+  }
+
+  async getMapAndLst() {
+    try {
+      const [x, y] = await AsyncStorage.multiGet([bookMap, bookLst]);
+      this.chapterContentMap = x[1] ? JSON.parse(x[1]) : new Map();
+      this.chapterList = y[1] ? JSON.parse(y[1]) : [];
+      this.chapterList.length === 0 && await this.fetchChapterList(this.currentBook.bookId)
+      await this.fetchContent(this.chapterList[this.state.recordNum].chapterId, 1);
+
+    } catch (err) {
+
     }
   }
 
@@ -138,9 +151,13 @@ class ReadScreen extends Component {
   }
 
   async fetchContent(chapterId, direct) {
-    const { err, data } = await content(this.currentBook.bookId, chapterId);
-    console.log(data);
-    this.getDataSource(data.Data, () => {
+    let data = this.chapterContentMap[chapterId];
+    if (!data) {
+      data = (await content(this.currentBook.bookId, chapterId)).data.content;
+      this.chapterContentMap[chapterId] = data;
+      AsyncStorage.setItem(bookMap, JSON.stringify(this.chapterContentMap));
+    }
+    this.getDataSource(data, () => {
       this.setState({
         goFlag: direct,
         loadFlag: false,
@@ -148,13 +165,22 @@ class ReadScreen extends Component {
     });
   }
 
-  async fetchChapterList(bookId, callback) {
-    const { err, data } = await chapterList(bookId);
-    for (let i = 0, j = data.length; i < j; i++) {
-      data[i].isDownload = false;//测试句
+  getContent(chapterId, index) {
+    this.setState({
+      loadFlag: true,
+      recordNum: index,
+    }, () => {
+      this.fetchContent(chapterId, 1);
+    });
+  }
+
+  async fetchChapterList(bookId) {
+    console.log(this.chapterList);
+    if (!this.chapterList.length) {
+      const { err, data } = await chapterList(bookId);
+      this.chapterList = data;
+      AsyncStorage.setItem(bookLst, JSON.stringify(this.chapterList));
     }
-    this.chapterList = data;
-    callback();
   }
 
   downChoose() {
@@ -219,7 +245,7 @@ class ReadScreen extends Component {
       }
     });
     this.props.navigation.setParams({
-      showHeeader: !flag
+      showHeader: !flag
     });
     this.setState({ isVisible: !flag });
   }
@@ -250,7 +276,7 @@ class ReadScreen extends Component {
             getPrevPage={this.getPrevPage}
             getCurrentPage={this.getCurrentPage}
             clickBoard={this.clickBoard}
-            initialPage={0}
+            initialPage={this.state.recordPage - 1}
             locked={this.state.isVisible}
             Gpag={this.state.goFlag} />)}
         <Toast ref="toast" />
@@ -258,8 +284,9 @@ class ReadScreen extends Component {
           screenProps={this.props.screenProps}
           navigation={this.props.navigation}
           chapterList={this.chapterList}
-          recordNum={this.state.recordNum + 1}
-          bookName={this.currentBook.bookName} />}
+          recordNum={this.state.recordNum}
+          bookName={this.currentBook.bookName}
+          getContent={this.getContent} />}
       </View>
     );
   }

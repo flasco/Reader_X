@@ -93,6 +93,7 @@ class BookList extends Component {
   }
 
   renderSimpleInfo(item) {
+    // console.log(item);
     return (
       <View style={this.styles.item.info.container}>
         <View style={this.styles.item.info.text.container}>
@@ -136,7 +137,7 @@ class BookList extends Component {
         titleStyle={this.styles.item.title.text}
         titleContainerStyle={this.styles.item.title.container}
         subtitle={this.renderSimpleInfo(rowData)} 
-        onPress={() => onPress(rowData)}
+        onPress={() => onPress(index)}
       />
     );
   }
@@ -174,6 +175,7 @@ class BookList extends Component {
     return <Divider style={this.styles.divider} />;
   }
 
+
   render() {
     return (
       <List style={this.styles.list.container}>
@@ -182,7 +184,6 @@ class BookList extends Component {
           data={this.state.booklist}
           renderItem={this.renderRow}
           ItemSeparatorComponent={this.renderSeparator}
-          keyExtractor={(item, index) => item.bookId}
           refreshState={this.state.fetchFlag}
           onHeaderRefresh={this.onHeaderRefresh}
         />
@@ -200,7 +201,7 @@ BookList.propTypes = {
 };
 
 BookList.defaultProps = {
-  datasource: list,
+  // datasource: list,
   type: BookListType.Complete,
   onItemClicked: () => {},
 };

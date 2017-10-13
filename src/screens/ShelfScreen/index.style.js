@@ -58,7 +58,7 @@ export default {
     container: {
       alignItems: 'center',
       marginTop: 14,
-      marginBottom:35,
+      marginBottom:42,
     },
     button: {
       wrapper: {

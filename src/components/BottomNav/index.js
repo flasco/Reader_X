@@ -24,8 +24,17 @@ class BottomNav extends Component {
     return (
       <View style={styles.Fotter}>
         <TouchableOpacity style={{ flex: 1 }} onPress={() => {
-          let item = {chapterList:this.props.chapterList,bookName:this.props.bookName,bookNum:this.props.recordNum};
-          console.log(item.bookNum);
+          let item = {
+            chapterList: this.props.chapterList,
+            bookName: this.props.bookName,
+            bookNum: this.props.recordNum,
+            callback: (chapterId,index) => {
+              console.log(`${chapterId}   ${index} `);
+              this.props.getContent(chapterId,index);
+            }
+          };
+          // console.log('bookNum:' + this.props.recordNum);
+          // this.props.cleanMenu();
           this.props.screenProps.router.navigate(this.props.navigation, 'Book', {}, NavigationActions.navigate({ routeName: 'Catalog', params: item }));
         }}>
           <Icon
@@ -37,7 +46,7 @@ class BottomNav extends Component {
         </TouchableOpacity>
         <TouchableOpacity
           style={{ flex: 1 }}
-          onPress={() => {}}
+          onPress={() => { }}
         >
           <Icon
             size={24}

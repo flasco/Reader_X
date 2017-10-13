@@ -60,9 +60,7 @@ class ShelfScreen extends Component {
 
   async onFetch() {
     try {
-      this.bookLst = {
-        data: JSON.parse(await AsyncStorage.getItem('@Reader_X:bookLst')),
-      };
+      this.bookLst = await JSON.parse(await AsyncStorage.getItem('@Reader_X:bookLst'));
       if (this.bookLst.data && this.bookLst.data.length) return this.bookLst;
 
       const { data, err } = await list();
@@ -71,8 +69,8 @@ class ShelfScreen extends Component {
       }
 
       this.bookLst = { data };
-      AsyncStorage.setItem('@Reader_X:bookLst', JSON.stringify(this.bookLst));
-      return ({ data });
+      await AsyncStorage.setItem('@Reader_X:bookLst', JSON.stringify(this.bookLst));
+      return this.bookLst;
     } catch (err) {
       return ({ err });
     }

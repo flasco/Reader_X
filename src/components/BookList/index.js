@@ -31,7 +31,7 @@ class BookList extends Component {
     super(props);
 
     this.state = {
-      booklist: [],
+      booklist: this.props.booklist || [],
       type: BookListType.Complete,
       loadingFlag: true,
       fetchFlag: RefreshState.Idle,
@@ -48,7 +48,15 @@ class BookList extends Component {
   }
 
   componentDidMount() {
-    this.onFetch();
+    this.props.dynamic && this.onFetch();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.booklist !== this.props.booklist) {
+      this.setState({
+        booklist: nextProps.booklist,
+      });
+    }
   }
 
   get styles() {
@@ -89,7 +97,7 @@ class BookList extends Component {
   }
 
   onHeaderRefresh() {
-    this.onFetch();
+    this.props.dynamic && this.onFetch();
   }
 
   renderSimpleInfo(item) {
@@ -98,12 +106,12 @@ class BookList extends Component {
       <View style={this.styles.item.info.container}>
         <View style={this.styles.item.info.text.container}>
           <Text style={this.styles.item.info.text.text}>
-            {item.author}
+            {item.Author}
           </Text>
         </View>
         <View style={this.styles.item.info.text.container}>
           <Text style={this.styles.item.info.text.text}>
-            {item.lastUpdateChapterName}
+            {item.LastUpdateChapterName}
           </Text>
         </View>
       </View>
@@ -115,12 +123,12 @@ class BookList extends Component {
       <View style={this.styles.item.info.container}>
         <View style={[this.styles.item.info.text.container, this.styles.item.info.description.container]}>
           <Text style={[this.styles.item.info.text.text]} numberOfLines={2} ellipsizeMode='tail'>
-            {item.description}
+            {item.Description}
           </Text>
         </View>
         <View style={[this.styles.item.info.text.container, this.styles.item.info.authors.container]}>
           <Text style={this.styles.item.info.text.text}>
-            {item.author}
+            {item.Author}
           </Text>
         </View>
       </View>
@@ -132,8 +140,8 @@ class BookList extends Component {
       <ListItem
         containerStyle={this.styles.item.container}
         hideChevron={ true }
-        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.bookId}/180`}} style={this.styles.item.preview} />}
-        title={rowData.bookName}
+        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.BookId}/180`}} style={this.styles.item.preview} />}
+        title={rowData.BookName}
         titleStyle={this.styles.item.title.text}
         titleContainerStyle={this.styles.item.title.container}
         subtitle={this.renderSimpleInfo(rowData)} 
@@ -147,12 +155,12 @@ class BookList extends Component {
       <ListItem
         containerStyle={this.styles.item.container}
         hideChevron={ true }
-        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.bookId}/180`}} style={this.styles.item.preview} />}
-        title={rowData.bookName}
+        leftIcon={<Image source={{uri: `https://qidian.qpic.cn/qdbimg/349573/${rowData.BookId}/180`}} style={this.styles.item.preview} />}
+        title={rowData.BookName}
         titleStyle={this.styles.item.title.text}
         titleContainerStyle={this.styles.item.title.container}
         subtitle={this.renderCompleteInfo(rowData)} 
-        onPress={() => onPress(rowData)}
+        onPress={() => onPress(rowData, index)}
       />
     );
   }
@@ -193,6 +201,7 @@ class BookList extends Component {
 }
 
 BookList.propTypes = {
+  dynamic: PropTypes.bool.isRequired,
   datasource: PropTypes.func.isRequired,
   type: PropTypes.oneOf(Object.values(BookListType)).isRequired,
   style: PropTypes.object,
@@ -201,7 +210,8 @@ BookList.propTypes = {
 };
 
 BookList.defaultProps = {
-  // datasource: list,
+  dynamic: true,
+  datasource: list,
   type: BookListType.Complete,
   onItemClicked: () => {},
 };

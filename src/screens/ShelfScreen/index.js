@@ -54,37 +54,25 @@ class ShelfScreen extends Component {
     super(props);
     this.renderFooter = this.renderFooter.bind(this);
     this.onFetch = this.onFetch.bind(this);
-    this.bookLst ;
+    this.bookLst;
     // AsyncStorage.clear();
   }
 
   async onFetch() {
     try {
-      this.bookLst = {
-        data:JSON.parse(await AsyncStorage.getItem('@Reader_X:bookLst'))
-      }
-      console.log(this.bookLst);
-      if (this.bookLst) return this.bookLst;
+      this.bookLst = await JSON.parse(await AsyncStorage.getItem('@Reader_X:bookLst'));
+      if (this.bookLst.data && this.bookLst.data.length) return this.bookLst;
 
       const { data, err } = await list();
-      let dataX = [];
-      for (let i = 0, j = data.length; i < j; i++) {
-        dataX[i] = {
-          bookName: data[i].BookName,
-          bookId: data[i].BookId,
-          author: data[i].Author,
-          lastUpdateChapterName: data[i].LastUpdateChapterName,
-          description: data[i].Description,
-          source: 'bqg',
-          recordNum: 0,
-          recordPage: 1,
-        };
+      if (err) {
+        return ({ err });
       }
-      this.bookLst = {data: dataX};
-      AsyncStorage.setItem('@Reader_X:bookLst', JSON.stringify( this.bookLst ));
-      return { data: dataX, err };
+
+      this.bookLst = { data };
+      await AsyncStorage.setItem('@Reader_X:bookLst', JSON.stringify(this.bookLst));
+      return this.bookLst;
     } catch (err) {
-      console.log(err);
+      return ({ err });
     }
   }
 
@@ -120,16 +108,13 @@ class ShelfScreen extends Component {
           ListFooterComponent={this.renderFooter}
           extraData={theme.styles.variables.colors.main}  // 设置主题色（如果不设置则无法触发list刷新DOM）
           onItemClicked={(index) => {
-            console.log(index);
             let item = {
-              fir:index,
-              sec:this.bookLst
+              fir: index,
+              sec: this.bookLst
             }
-            console.log('111')
-            console.log(this.bookLst);
             this.props.screenProps.router.navigate(this.props.navigation, 'Book', item, NavigationActions.navigate({ routeName: 'Read', params: item }));
           }}
-          keyExtractor={(item, index) => item.bookId}
+          keyExtractor={(item, index) => item.BookId}
         />
       </Page>
     );

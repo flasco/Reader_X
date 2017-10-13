@@ -60,8 +60,10 @@ class ShelfScreen extends Component {
 
   async onFetch() {
     try {
-      this.bookLst = JSON.parse(await AsyncStorage.getItem('@Reader_X:bookLst'));
-      // console.log(this.bookLst);
+      this.bookLst = {
+        data:JSON.parse(await AsyncStorage.getItem('@Reader_X:bookLst'))
+      }
+      console.log(this.bookLst);
       if (this.bookLst) return this.bookLst;
 
       const { data, err } = await list();
@@ -123,6 +125,8 @@ class ShelfScreen extends Component {
               fir:index,
               sec:this.bookLst
             }
+            console.log('111')
+            console.log(this.bookLst);
             this.props.screenProps.router.navigate(this.props.navigation, 'Book', item, NavigationActions.navigate({ routeName: 'Read', params: item }));
           }}
           keyExtractor={(item, index) => item.bookId}

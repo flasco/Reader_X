@@ -16,9 +16,9 @@ import styles from './index.style';
 const width = styles.width;
 const height = styles.height;
 
-let tht, bookLst, bookMap;
+let tht, bookLst, bookMap,novelList;
 
-class ReadItem extends PureComponent {
+class ReadItem extends Component {
   constructor(props) {
     super(props);
     this.date = dateFormat(new Date(), 'H:MM');
@@ -86,10 +86,10 @@ class ReadScreen extends Component {
   }
   constructor(props) {
     super(props);
-    this.novelList = props.navigation.state.params.sec.data;
+    novelList = props.navigation.state.params.sec.data;
     console.log(props.navigation.state.params.sec);
     this.novelNum = props.navigation.state.params.fir;
-    this.currentBook = this.novelList[this.novelNum];
+    this.currentBook = novelList[this.novelNum];
     console.log(this.currentBook)
     this.totalPage = 1;
     this.chapterList;
@@ -97,6 +97,7 @@ class ReadScreen extends Component {
 
     bookMap = `@Reader_X:${this.currentBook.bookId}_${this.currentBook.source}_Map`;
     bookLst = `@Reader_X:${this.currentBook.bookId}_${this.currentBook.source}_Lst`;
+    console.log(novelList[this.novelNum].recordPage);
     // console.log(this.currentBook)
     this.state = {
       currentNum: 1, //props.navigation.state.params.bookNum,
@@ -105,7 +106,7 @@ class ReadScreen extends Component {
       isVisible: false, //判断导航栏是否应该隐藏
       goFlag: 0, //判断是前往上一章（-1）还是下一章（1）
       recordNum: this.currentBook.recordNum,//记录章节index
-      recordPage: this.currentBook.recordPage,//记录读到的page
+      recordPage: novelList[this.novelNum].recordPage,//记录读到的page
     };
 
     tht = this;
@@ -133,7 +134,6 @@ class ReadScreen extends Component {
       this.chapterList = y[1] ? JSON.parse(y[1]) : [];
       this.chapterList.length === 0 && await this.fetchChapterList(this.currentBook.bookId)
       await this.fetchContent(this.chapterList[this.state.recordNum].chapterId, 1);
-
     } catch (err) {
 
     }
@@ -224,8 +224,15 @@ class ReadScreen extends Component {
     });
   }
 
-  getCurrentPage(pag) {
+  async getCurrentPage(pag) {
     pag = pag === 0 ? 1 : pag;
+    // this.currentBook.recordPage = pag;
+    novelList[this.novelNum].recordPage = pag;
+    const x = await AsyncStorage.setItem('@Reader_X:bookLst',JSON.stringify(novelList));
+    const y = await AsyncStorage.getItem('@Reader_X:bookLst');
+
+    console.log(JSON.parse(y));
+    // console.log(novelList);
   }
 
   clickBoard() {
@@ -255,6 +262,7 @@ class ReadScreen extends Component {
     this.totalPage = arr.length;
     this.setState({
       currentItem: arr,
+      recordPage:novelList[this.novelNum].recordPage
     }, callback);
   }
 
@@ -276,7 +284,7 @@ class ReadScreen extends Component {
             getPrevPage={this.getPrevPage}
             getCurrentPage={this.getCurrentPage}
             clickBoard={this.clickBoard}
-            initialPage={this.state.recordPage - 1}
+            initialPage={4}
             locked={this.state.isVisible}
             Gpag={this.state.goFlag} />)}
         <Toast ref="toast" />

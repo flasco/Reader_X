@@ -15,8 +15,9 @@ import Page from '../../components/Page';
 import Toast from '../../components/Toast';
 import BookList, { BookListType } from '../../components/BookList';
 
-import { list } from '../../services/book';
+import realm from '../../models';
 
+import { list } from '../../services/book';
 
 import { theme } from '../../theme';
 import styles from './index.style';
@@ -54,26 +55,31 @@ class ShelfScreen extends Component {
     super(props);
     this.renderFooter = this.renderFooter.bind(this);
     this.onFetch = this.onFetch.bind(this);
-    this.bookLst;
-    // AsyncStorage.clear();
   }
 
   async onFetch() {
-    try {
-      this.bookLst = await JSON.parse(await AsyncStorage.getItem('@Reader_X:bookLst'));
-      if (this.bookLst && this.bookLst.data && this.bookLst.data.length) return this.bookLst;
-
-      const { data, err } = await list();
-      if (err) {
-        return ({ err });
-      }
-
-      this.bookLst = { data };
-      await AsyncStorage.setItem('@Reader_X:bookLst', JSON.stringify(this.bookLst));
-      return this.bookLst;
-    } catch (err) {
-      return ({ err });
+    const bookLst = realm.objects('Shelf').sorted('LastReadedTime', true);
+    if (bookLst && bookLst.length > 0) {
+      return { data: bookLst };
     }
+
+    const { data, err } = await list();
+    if (err) {
+      return { err };
+    }
+
+    requestAnimationFrame(() => {
+      realm.write(() => {
+        data.map(item => {
+          realm.create('Shelf', {
+            ...item,
+            Progress: 0,
+          });
+        });
+      });
+    });
+
+    return { data };
   }
 
   renderFooter() {
@@ -108,7 +114,6 @@ class ShelfScreen extends Component {
           ListFooterComponent={this.renderFooter}
           extraData={theme.styles.variables.colors.main}  // 设置主题色（如果不设置则无法触发list刷新DOM）
           onItemClicked={(item) => {
-            console.log(item);
             this.props.screenProps.router.navigate(this.props.navigation, 'Book', item, NavigationActions.navigate({ routeName: 'Read', params: item }));
           }}
           keyExtractor={(item, index) => item.BookId}

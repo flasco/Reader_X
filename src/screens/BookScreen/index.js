@@ -308,6 +308,20 @@ class BookScreen extends Component {
     );
   }
 
+  renderToolbar(book) {
+    return (
+      <TouchableWithoutFeedback
+        onPress={() => {
+          this.props.screenProps.router.navigate(this.props.navigation, 'Book', book, NavigationActions.navigate({ routeName: 'Read', params: book }));
+        }}
+      >
+        <View>
+          <Text>阅读</Text>
+        </View>
+      </TouchableWithoutFeedback>
+    )
+  }
+
   render() {
     const book = this.state.book;
     return (
@@ -331,6 +345,7 @@ class BookScreen extends Component {
           {this.renderBookComment(book)}
           {this.renderAuthorInfo(book)}
         </ParallaxView>
+        {this.renderToolbar(book)}
       </Page>
     );
   }

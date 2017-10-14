@@ -57,8 +57,13 @@ class ShelfScreen extends Component {
     this.bookLst = [];
 
     this.onFetch = this.onFetch.bind(this);
-    this.renderFooter = this.renderFooter.bind(this);
     this.addDataListener = this.addDataListener.bind(this);
+    this.removeDataListener = this.removeDataListener.bind(this);
+    this.renderFooter = this.renderFooter.bind(this);
+  }
+
+  componentWillUnmount() {
+    this.removeDataListener();
   }
 
   async onFetch() {
@@ -94,6 +99,10 @@ class ShelfScreen extends Component {
     this.bookLst.addListener((puppies, changes) => {
       this.forceUpdate();
     });
+  }
+
+  removeDataListener() {
+    this.bookLst.removeAllListeners();
   }
 
   renderFooter() {

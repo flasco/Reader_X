@@ -15,6 +15,7 @@ Shelf.schema = {
     LastUpdateChapterName:    'string',                                                   // 最新更新章节名称
     LastReadedTime:           {type: 'int', optional: true, indexed: true},               // 上次阅读时间，时间戳
     LastChapter:              {type: 'string', optional: true},                           // 最近阅读章节
+    LastChapterReadPage:      {type: 'int', default: 0},                                  // 上次阅读章节内的页索引
     Progress:                 {type: 'double', optional: true},                           // 阅读进度
   },
 }

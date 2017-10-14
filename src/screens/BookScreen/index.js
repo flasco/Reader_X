@@ -10,13 +10,15 @@ import {
 } from 'react-native';
 
 import { NavigationActions } from 'react-navigation';
-import { Icon, Button, Rating, Divider, Avatar } from 'react-native-elements';
+import { Icon, Button, Rating, Divider, Avatar, ButtonGroup } from 'react-native-elements';
 import { ParallaxView } from 'react-native-pin-parallax-view';
 
 import Page from '../../components/Page';
 import RefreshFlatList, { RefreshState } from '../../components/RefreshFlatList';
 import BookComment from '../../components/BookComment';
 import Toast from '../../components/Toast';
+
+import realm from '../../models';
 
 import { theme } from '../../theme';
 import styles from './index.style';
@@ -107,6 +109,9 @@ class BookScreen extends Component {
     this.renderBookComment = this.renderBookComment.bind(this);
     this.renderAuthorBooks = this.renderAuthorBooks.bind(this);
     this.renderAuthorInfo = this.renderAuthorInfo.bind(this);
+
+    this.renderToolbar = this.renderToolbar.bind(this);
+    this.renderToolbarButton = this.renderToolbarButton.bind(this);
   }
 
   componentDidMount() {
@@ -308,17 +313,52 @@ class BookScreen extends Component {
     );
   }
 
-  renderToolbar(book) {
+  renderToolbarButton(text, color = theme.styles.variables.colors.text, backgroundColor = theme.styles.variables.colors.contrast) {
     return (
-      <TouchableWithoutFeedback
-        onPress={() => {
-          this.props.screenProps.router.navigate(this.props.navigation, 'Book', book, NavigationActions.navigate({ routeName: 'Read', params: book }));
+      <Text style={{
+        backgroundColor,
+        color,
+        height: 60, lineHeight: 60, width: theme.styles.variables.width / 3,
+        fontSize: theme.styles.variables.size.lg,
+        textAlign: 'center',
+      }}>{text}</Text>
+    )
+  }
+
+  renderToolbar(book) {
+    const nullBtn = () => this.renderToolbarButton(' ');
+    const readBtn = () => this.renderToolbarButton('立即阅读', theme.styles.variables.colors.contrast, theme.styles.navContainer.backgroundColor)
+    const addShelf = () => this.renderToolbarButton('加入书架');
+    return (
+      <ButtonGroup
+        onPress={(selectIndex) => {
+          if (selectIndex === 1) {
+            // 立即阅读
+            this.props.screenProps.router.navigate(this.props.navigation, 'Book', book, NavigationActions.navigate({ routeName: 'Read', params: book }));
+          } else if (selectIndex === 2) {
+            // 加入书架
+            requestAnimationFrame(() => {
+              const alreadyIn = realm.objectForPrimaryKey('Shelf', book.BookId);
+              if (alreadyIn) return false;
+
+              // TODO, 如果加入的书籍本身已经被阅读过，则直接提取阅读记录存储到书架内
+              const appendTime = new Date().getTime();
+              realm.write(() => {
+                realm.create('Shelf', {
+                  ...book,
+                  Progress: 0,
+                  LastAppendTime: appendTime,
+                });
+              });
+            });
+          }
         }}
-      >
-        <View>
-          <Text>阅读</Text>
-        </View>
-      </TouchableWithoutFeedback>
+        component={TouchableWithoutFeedback}
+        buttons={[{ element: nullBtn }, { element: readBtn }, { element: addShelf }]}
+        containerBorderRadius={0}
+        containerStyle={{ height: 60, padding: 0, margin: 0, borderWidth: 0 }}
+        buttonStyle={{ margin: 0, padding: 0, }}
+      />
     )
   }
 

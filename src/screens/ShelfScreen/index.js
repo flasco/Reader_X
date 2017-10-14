@@ -15,7 +15,7 @@ import Page from '../../components/Page';
 import Toast from '../../components/Toast';
 import BookList, { BookListType } from '../../components/BookList';
 
-import realm from '../../models';
+import realm, { SortDescriptor } from '../../models';
 
 import { list } from '../../services/book';
 
@@ -53,14 +53,20 @@ class ShelfScreen extends Component {
   };
   constructor(props) {
     super(props);
-    this.renderFooter = this.renderFooter.bind(this);
+
+    this.bookLst = [];
+
     this.onFetch = this.onFetch.bind(this);
+    this.renderFooter = this.renderFooter.bind(this);
+    this.addDataListener = this.addDataListener.bind(this);
   }
 
   async onFetch() {
-    const bookLst = realm.objects('Shelf').sorted('LastReadedTime', true);
-    if (bookLst && bookLst.length > 0) {
-      return { data: bookLst };
+    const sortProperties = [['LastReadedTime', true], ['LastAppendTime', true]];
+    this.bookLst = realm.objects('Shelf').sorted(sortProperties);
+    if (this.bookLst && this.bookLst.length > 0) {
+      this.addDataListener();
+      return { data: this.bookLst };
     }
 
     const { data, err } = await list();
@@ -68,18 +74,26 @@ class ShelfScreen extends Component {
       return { err };
     }
 
-    requestAnimationFrame(() => {
-      realm.write(() => {
-        data.map(item => {
-          realm.create('Shelf', {
-            ...item,
-            Progress: 0,
-          });
+    const appendTime = new Date().getTime();
+    realm.write(() => {
+      data.map(item => {
+        realm.create('Shelf', {
+          ...item,
+          Progress: 0,
+          LastAppendTime: appendTime,
         });
       });
     });
 
-    return { data };
+    this.bookLst = realm.objects('Shelf').sorted(sortProperties);
+    this.addDataListener();
+    return { data: this.bookLst };
+  }
+
+  addDataListener() {
+    this.bookLst.addListener((puppies, changes) => {
+      this.forceUpdate();
+    });
   }
 
   renderFooter() {

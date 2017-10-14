@@ -12,6 +12,7 @@ Shelf.schema = {
     Author:                   'string',                                                   // 图书作者
     Description:              'string',                                                   // 图书描述
     Label:                    {type: 'string', optional: true},                           // 图书tag
+    LastAppendTime:           {type: 'int', default: 0},                                  // 图书加入书架的时间
     LastUpdateChapterName:    'string',                                                   // 最新更新章节名称
     LastReadedTime:           {type: 'int', optional: true, indexed: true},               // 上次阅读时间，时间戳
     LastChapter:              {type: 'string', optional: true},                           // 最近阅读章节

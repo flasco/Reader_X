@@ -113,10 +113,7 @@ class ShelfScreen extends Component {
           datasource={this.onFetch}
           ListFooterComponent={this.renderFooter}
           extraData={theme.styles.variables.colors.main}  // 设置主题色（如果不设置则无法触发list刷新DOM）
-          onItemClicked={(index) => {
-            let item = {
-              fir: index,
-            }
+          onItemClicked={(item) => {
             this.props.screenProps.router.navigate(this.props.navigation, 'Book', item, NavigationActions.navigate({ routeName: 'Read', params: item }));
           }}
           keyExtractor={(item, index) => item.BookId}

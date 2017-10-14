@@ -145,7 +145,7 @@ class BookList extends Component {
         titleStyle={this.styles.item.title.text}
         titleContainerStyle={this.styles.item.title.container}
         subtitle={this.renderSimpleInfo(rowData)} 
-        onPress={() => onPress(index)}
+        onPress={() => onPress(rowData)}
       />
     );
   }

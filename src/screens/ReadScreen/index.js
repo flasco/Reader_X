@@ -16,7 +16,7 @@ import styles from './index.style';
 const width = styles.width;
 const height = styles.height;
 
-let tht, bookLst, bookMap, novelList;
+let tht, bookLstTag, bookMapTag, bookInfoTag;
 
 class ReadItem extends Component {
   constructor(props) {
@@ -86,16 +86,17 @@ class ReadScreen extends Component {
   }
   constructor(props) {
     super(props);
-    novelList = props.navigation.state.params.sec.data;
 
-    this.novelNum = props.navigation.state.params.fir;
-    this.currentBook = novelList[this.novelNum];
+    this.currentBook = props.navigation.state.params;
     this.totalPage = 1;
     this.chapterList;
     this.chapterContentMap;
 
-    bookMap = `@Reader_X:${this.currentBook.BookId}_${this.currentBook.source || 'bqg'}_Map`;
-    bookLst = `@Reader_X:${this.currentBook.BookId}_${this.currentBook.source || 'bqg'}_Lst`;
+    bookMapTag = `@Reader_X:${this.currentBook.BookId}_${this.currentBook.source || 'bqg'}_Map`;
+    bookLstTag = `@Reader_X:${this.currentBook.BookId}_${this.currentBook.source || 'bqg'}_Lst`;
+    bookInfoTag = `@Reader_X:${this.currentBook.BookId}__${this.currentBook.source || 'bqg'}_Info`;
+
+    this.bookInfo;
 
     this.state = {
       currentNum: 1, //props.navigation.state.params.bookNum,
@@ -103,8 +104,6 @@ class ReadScreen extends Component {
       currentItem: '', //作为章节内容的主要获取来源。
       isVisible: false, //判断导航栏是否应该隐藏
       goFlag: 0, //判断是前往上一章（-1）还是下一章（1）
-      recordNum: this.currentBook.recordNum || 0,//记录章节index
-      recordPage: novelList[this.novelNum].recordPage || 0,//记录读到的page
     };
 
     tht = this;
@@ -114,7 +113,6 @@ class ReadScreen extends Component {
     this.getPrevPage = this.getPrevPage.bind(this);
     this.getCurrentPage = this.getCurrentPage.bind(this);
     this.clickBoard = this.clickBoard.bind(this);
-    this.getDataSource = this.getDataSource.bind(this);
     this.downChoose = this.downChoose.bind(this);
     this.getContent = this.getContent.bind(this);
     this.getMapAndLst = this.getMapAndLst.bind(this);
@@ -125,18 +123,19 @@ class ReadScreen extends Component {
 
   async getMapAndLst() {
     try {
-      const [x, y] = await AsyncStorage.multiGet([bookMap, bookLst]);
+      const [x, y, z] = await AsyncStorage.multiGet([bookMapTag, bookLstTag, bookInfoTag]);
       this.chapterContentMap = x[1] ? JSON.parse(x[1]) : new Map();
       this.chapterList = y[1] ? JSON.parse(y[1]) : [];
+      this.bookInfo = z[1] ? JSON.parse(z[1]) : { recordNum: 0, recordPage: 0 };
       this.chapterList.length === 0 && await this.fetchChapterList(this.currentBook.BookId);
-      this.chapterList.length !== 0 && await this.fetchContent(this.chapterList[this.state.recordNum].chapterId, 1);
+      this.chapterList.length !== 0 && await this.fetchContent(this.chapterList[this.bookInfo.recordNum].chapterId, 0);
     } catch (err) {
-
+      // console.log(err);
     }
   }
 
   renderPage(data, pageID) {
-    const title = this.chapterList[this.state.recordNum].title;
+    const title = this.chapterList[this.bookInfo.recordNum].title;
     return (
       <ReadItem
         data={data}
@@ -151,20 +150,22 @@ class ReadScreen extends Component {
     if (!data) {
       data = (await content(this.currentBook.BookId, chapterId)).data.content;
       this.chapterContentMap[chapterId] = data;
-      AsyncStorage.setItem(bookMap, JSON.stringify(this.chapterContentMap));
+      AsyncStorage.setItem(bookMapTag, JSON.stringify(this.chapterContentMap));
     }
-    this.getDataSource(data, () => {
-      this.setState({
-        goFlag: direct,
-        loadFlag: false,
-      });
+
+    let arr = getContextArr(data, width, height, 23);//23 是字体大小
+    this.totalPage = arr.length;
+    this.setState({
+      currentItem: arr,
+      goFlag: direct,
+      loadFlag: false,
     });
   }
 
   getContent(chapterId, index) {
+    this.bookInfo.recordNum = index;
     this.setState({
       loadFlag: true,
-      recordNum: index,
     }, () => {
       this.fetchContent(chapterId, 1);
     });
@@ -175,7 +176,7 @@ class ReadScreen extends Component {
       const { data, err } = await chapterList(bookId);
       this.chapterList = data;
       try {
-        await AsyncStorage.setItem(bookLst, JSON.stringify(this.chapterList));
+        await AsyncStorage.setItem(bookLstTag, JSON.stringify(this.chapterList));
       } catch (err) { }
     }
   }
@@ -200,22 +201,22 @@ class ReadScreen extends Component {
   }
 
   getNextPage() {
-    if (this.state.recordNum >= this.chapterList.length - 1) {
-      console.log('到最后一页了...');
+    if (this.bookInfo.recordNum >= this.chapterList.length - 1) {
+      this.refs.toast.show('到最后一页了...');
       return;
     }
-    let chapterId = this.chapterList[++this.state.recordNum].chapterId;
+    const chapterId = this.chapterList[++this.bookInfo.recordNum].chapterId;
     this.setState({ loadFlag: true }, () => {
       this.fetchContent(chapterId, 1);
     });
   }
 
   getPrevPage() {
-    if (this.state.recordNum <= 0) {
-      console.log('到第一页了了...');
+    if (this.bookInfo.recordNum <= 0) {
+      this.refs.toast.show('到第一页了...');
       return;
     }
-    let chapterId = this.chapterList[--this.state.recordNum].chapterId;
+    const chapterId = this.chapterList[--this.bookInfo.recordNum].chapterId;
     this.setState({ loadFlag: true }, () => {
       this.fetchContent(chapterId, -1);
     });
@@ -223,13 +224,8 @@ class ReadScreen extends Component {
 
   async getCurrentPage(pag) {
     pag = pag === 0 ? 1 : pag;
-    // this.currentBook.recordPage = pag;
-    novelList[this.novelNum].recordPage = pag;
-    const x = await AsyncStorage.setItem('@Reader_X:bookLst', JSON.stringify(novelList));
-    const y = await AsyncStorage.getItem('@Reader_X:bookLst');
-
-    // console.log(JSON.parse(y));
-    // console.log(novelList);
+    this.bookInfo.recordPage = pag;
+    await AsyncStorage.setItem(bookInfoTag, JSON.stringify(this.bookInfo));
   }
 
   clickBoard() {
@@ -254,14 +250,6 @@ class ReadScreen extends Component {
     this.setState({ isVisible: !flag });
   }
 
-  getDataSource(currentContent, callback) {
-    let arr = getContextArr(currentContent, width, height, 23);
-    this.totalPage = arr.length;
-    this.setState({
-      currentItem: arr,
-      recordPage: novelList[this.novelNum].recordPage
-    }, callback);
-  }
 
   render() {
     const ViewDs = new ViewPager.DataSource({ pageHasChanged: (p1, p2) => p1 !== p2 });
@@ -281,7 +269,7 @@ class ReadScreen extends Component {
             getPrevPage={this.getPrevPage}
             getCurrentPage={this.getCurrentPage}
             clickBoard={this.clickBoard}
-            initialPage={4}
+            initialPage={this.bookInfo.recordPage - 1}
             locked={this.state.isVisible}
             Gpag={this.state.goFlag} />)}
         <Toast ref="toast" />
@@ -289,7 +277,7 @@ class ReadScreen extends Component {
           screenProps={this.props.screenProps}
           navigation={this.props.navigation}
           chapterList={this.chapterList}
-          recordNum={this.state.recordNum}
+          recordNum={this.bookInfo.recordNum}
           bookName={this.currentBook.bookName}
           getContent={this.getContent} />}
       </View>

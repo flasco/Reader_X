@@ -68,11 +68,6 @@ class CatalogScreen extends PureComponent {
 
   async fetchChapterLst(bookId, direct) {
     const { err, data } = await chapterList(bookId);
-    // console.log(data);
-    // for (let i = 0, j = data.length; i < j; i++) {
-    //   data[i].isDownload = i % 2;//测试句
-    // }
-
     this.setState({
       bookList: data,
     });
@@ -97,9 +92,9 @@ class CatalogScreen extends PureComponent {
       <ListItem
         key={item.item.chapterId}
         hideChevron={true}
-        title={item.item.title}
+        title={item.item.Title}
         onPress = {()=>{
-          this.props.navigation.state.params.callback(item.item.chapterId,item.index);
+          this.props.navigation.state.params.callback(item.item.ChapterId,item.index);
           this.props.screenProps.router.goBack(this.props.navigation);
         }}
         titleStyle={[itemColor, { fontSize: 15 }]}
@@ -118,7 +113,7 @@ class CatalogScreen extends PureComponent {
           data={this.state.bookList}
           renderItem={this.renderRow}
           ItemSeparatorComponent={this.renderSeparator}
-          keyExtractor={(item, index) => item.chapterId}
+          keyExtractor={(item, index) => item.ChapterId}
           refreshState={this.state.fetchFlag}
           getItemLayout={(data, index) => ({ length: 50, offset: 51 * index, index })}//行高38，分割线1，所以offset=39
           onHeaderRefresh={this.onHeaderRefresh} />

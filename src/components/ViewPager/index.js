@@ -29,7 +29,7 @@ class ViewPager extends PureComponent{
       return Animated.timing(animate,
         {
           toValue: toValue,
-          duration: 60,
+          duration: 160,
           easing: Easing.linear,
           useNativeDriver: true,//使用原生驱动，更加流畅
         });
@@ -162,8 +162,11 @@ class ViewPager extends PureComponent{
       this.fling = false;
     }
   }
+  clearcmp = () => {
+    this.goToPage(0,false,true);
+  }
 
-  goToPage(pageNumber, animate = true) {
+  goToPage(pageNumber, animate = true,whetherClear = false) {
     
     let pageCount = this.maxP;
     if (pageNumber < 0 || pageNumber > pageCount) {
@@ -171,10 +174,10 @@ class ViewPager extends PureComponent{
     }
 
     let step = pageNumber - this.state.currentPage;
-    this.movePage(step, null, animate);
+    this.movePage(step, null, animate,whetherClear);
   }
 
-  movePage(step, gs, animate = true) {
+  movePage(step, gs, animate = true,whetherClear = false) {
     let pageCount = this.maxP;
     // console.log('...'+ pageCount)
     let pageNumber = this.state.currentPage + step;
@@ -194,7 +197,7 @@ class ViewPager extends PureComponent{
       this.props.getPrevPage();
       return ;
     }
-    step !== 0 && this.props.getCurrentPage(pageNumber+1);
+    step !== 0 && !whetherClear && this.props.getCurrentPage(pageNumber+1);
     if (this.props.isLoop) {
       pageNumber = pageCount == 0 ? pageNumber = 0 : ((pageNumber + pageCount) % pageCount);
     } else {

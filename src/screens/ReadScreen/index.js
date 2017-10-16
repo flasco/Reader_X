@@ -1,22 +1,24 @@
 import React, { Component, PureComponent } from 'react';
 import { StyleSheet, Text, View, Dimensions, StatusBar, ActionSheetIOS, AsyncStorage, LayoutAnimation } from 'react-native';
 
-import { Icon } from 'react-native-elements';
+import { Icon ,Button } from 'react-native-elements';
 import Toast from 'react-native-easy-toast';
 import dateFormat from 'dateformat';
+import { HeaderBackButton } from 'react-navigation';
 
 import ViewPager from '../../components/ViewPager';
 import getContextArr from '../../utils/getContextArr';
 import BottomNav from '../../components/BottomNav';
 
 import { content, chapterList } from '../../services/book';
+import realm, { SortDescriptor } from '../../models';
 
 import styles from './index.style';
 
 const width = styles.width;
 const height = styles.height;
 
-let tht, bookLstTag, bookMapTag, bookInfoTag;
+let tht;
 
 class ReadItem extends Component {
   constructor(props) {
@@ -53,6 +55,15 @@ class ReadScreen extends Component {
         opacity: 0.75
       },
       ...showHeader,
+      headerLeft:(
+        <HeaderBackButton
+        title='返回'
+        tintColor={'#fff'}
+        onPress={() => {
+          tht.refs.pager.clearcmp();
+          screenProps.router.goBack(navigation);
+        }}/>
+      ),
       headerRight: (
         <View style={styles.navRightContainer}>
           <Icon
@@ -87,19 +98,14 @@ class ReadScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.currentBook = props.navigation.state.params;
+    const bookId = props.navigation.state.params.BookId;
+    this.currentBook  = realm.objects('Shelf').filtered(`BookId = ${bookId}`)[0];
+    console.log(this.currentBook);
     this.totalPage = 1;
     this.chapterList;
-    this.chapterContentMap;
-
-    bookMapTag = `@Reader_X:${this.currentBook.BookId}_${this.currentBook.source || 'bqg'}_Map`;
-    bookLstTag = `@Reader_X:${this.currentBook.BookId}_${this.currentBook.source || 'bqg'}_Lst`;
-    bookInfoTag = `@Reader_X:${this.currentBook.BookId}__${this.currentBook.source || 'bqg'}_Info`;
-
-    this.bookInfo;
+    this.recordNum = 0;
 
     this.state = {
-      currentNum: 1, //props.navigation.state.params.bookNum,
       loadFlag: true, //判断是出于加载状态还是显示状态
       currentItem: '', //作为章节内容的主要获取来源。
       isVisible: false, //判断导航栏是否应该隐藏
@@ -117,25 +123,52 @@ class ReadScreen extends Component {
     this.getContent = this.getContent.bind(this);
     this.getMapAndLst = this.getMapAndLst.bind(this);
 
-    this.getMapAndLst();
+
+    this.getMapAndLst(bookId);
 
   }
 
-  async getMapAndLst() {
-    try {
-      const [x, y, z] = await AsyncStorage.multiGet([bookMapTag, bookLstTag, bookInfoTag]);
-      this.chapterContentMap = x[1] ? JSON.parse(x[1]) : new Map();
-      this.chapterList = y[1] ? JSON.parse(y[1]) : [];
-      this.bookInfo = z[1] ? JSON.parse(z[1]) : { recordNum: 0, recordPage: 0 };
-      this.chapterList.length === 0 && await this.fetchChapterList(this.currentBook.BookId);
-      this.chapterList.length !== 0 && await this.fetchContent(this.chapterList[this.bookInfo.recordNum].chapterId, 0);
-    } catch (err) {
-      // console.log(err);
+  async getMapAndLst(bookId) {
+    this.chapterList = realm.objects('Chapter').filtered(`BookId = ${bookId}`).sorted(['ChapterId']);
+    if (this.chapterList && this.chapterList.length > 0) {
+      for (let i = 0, j = this.chapterList.length; i < j; i++) { // 如果都不等，recordNum 默认等于0，从头开始。
+        if (this.chapterList[i].Title === this.currentBook.LastChapter) {
+          this.recordNum = i;
+          break;
+        }
+      }
+    } else {
+      const { data, err } = await chapterList(bookId);
+      // console.log(data);
+      realm.write(() => {
+        data.map(item => {
+          // console.log(item);
+          realm.create('Chapter', {
+            BookId: bookId,
+            ChapterId:+item.chapterId,
+            Title:item.title,
+          });
+        });
+      });
+      this.chapterList = realm.objects('Chapter').filtered(`BookId = ${bookId}`).sorted(['ChapterId']);
+      
     }
+    // console.log(chapterList);
+
+    await this.fetchContent(this.chapterList[this.recordNum].ChapterId, 0);
+
+
+    // const [x, y, z] = await AsyncStorage.multiGet([bookMapTag, bookLstTag, bookRecordTag]);
+    // this.chapterContentMap = x[1] ? JSON.parse(x[1]) : new Map();
+    // this.chapterList = y[1] ? JSON.parse(y[1]) : [];
+    // this.bookRecord = z[1] ? JSON.parse(z[1]) : { recordNum: 0, recordPage: 1 };
+    // this.chapterList.length === 0 && await this.fetchChapterList(this.currentBook.BookId);
+    // this.chapterList.length !== 0 && await this.fetchContent(this.chapterList[this.bookRecord.recordNum].chapterId, 0);
+
   }
 
   renderPage(data, pageID) {
-    const title = this.chapterList[this.bookInfo.recordNum].title;
+    const title = this.chapterList[this.recordNum].Title;
     return (
       <ReadItem
         data={data}
@@ -146,13 +179,16 @@ class ReadScreen extends Component {
   }
 
   async fetchContent(chapterId, direct) {
-    let data = this.chapterContentMap[chapterId];
-    if (!data) {
-      data = (await content(this.currentBook.BookId, chapterId)).data.content;
-      this.chapterContentMap[chapterId] = data;
-      AsyncStorage.setItem(bookMapTag, JSON.stringify(this.chapterContentMap));
-    }
+    let data = this.chapterList[this.recordNum].Content;
 
+    if (!data || data.length<1) {
+      data = (await content(this.currentBook.BookId, chapterId)).data.content;
+      // console.log(this.chapterList[this.recordNum]);
+      // realm.write(()=>{   //buG所在
+      //   this.chapterList[this.recordNum].Content = data;
+      // })
+      // this.chapterList[this.recordNum].Content = data;
+    }
     let arr = getContextArr(data, width, height, 23);//23 是字体大小
     this.totalPage = arr.length;
     this.setState({
@@ -163,22 +199,12 @@ class ReadScreen extends Component {
   }
 
   getContent(chapterId, index) {
-    this.bookInfo.recordNum = index;
+    this.recordNum = index;
     this.setState({
       loadFlag: true,
     }, () => {
       this.fetchContent(chapterId, 1);
     });
-  }
-
-  async fetchChapterList(bookId) {
-    if (!this.chapterList.length) {
-      const { data, err } = await chapterList(bookId);
-      this.chapterList = data;
-      try {
-        await AsyncStorage.setItem(bookLstTag, JSON.stringify(this.chapterList));
-      } catch (err) { }
-    }
   }
 
   downChoose() {
@@ -201,22 +227,22 @@ class ReadScreen extends Component {
   }
 
   getNextPage() {
-    if (this.bookInfo.recordNum >= this.chapterList.length - 1) {
+    if (this.recordNum >= this.chapterList.length - 1) {
       this.refs.toast.show('到最后一页了...');
       return;
     }
-    const chapterId = this.chapterList[++this.bookInfo.recordNum].chapterId;
+    const chapterId = this.chapterList[++this.recordNum].ChapterId;
     this.setState({ loadFlag: true }, () => {
       this.fetchContent(chapterId, 1);
     });
   }
 
   getPrevPage() {
-    if (this.bookInfo.recordNum <= 0) {
+    if (this.recordNum <= 0) {
       this.refs.toast.show('到第一页了...');
       return;
     }
-    const chapterId = this.chapterList[--this.bookInfo.recordNum].chapterId;
+    const chapterId = this.chapterList[--this.recordNum].ChapterId;
     this.setState({ loadFlag: true }, () => {
       this.fetchContent(chapterId, -1);
     });
@@ -224,8 +250,12 @@ class ReadScreen extends Component {
 
   async getCurrentPage(pag) {
     pag = pag === 0 ? 1 : pag;
-    this.bookInfo.recordPage = pag;
-    await AsyncStorage.setItem(bookInfoTag, JSON.stringify(this.bookInfo));
+    realm.write(()=>{
+      this.currentBook.LastChapterReadPage = pag;
+    })
+    // this.currentBook.setLastChapterReadPage(pag);
+    // this.currentBook.recordPage = pag;
+    // await AsyncStorage.setItem(bookRecordTag, JSON.stringify(this.bookRecord));
   }
 
   clickBoard() {
@@ -263,22 +293,24 @@ class ReadScreen extends Component {
           <Text style={styles.centr}>
             Loading...</Text>) :
           (<ViewPager
+            ref={'pager'}
             dataSource={ViewDs.cloneWithPages(this.state.currentItem)}
             renderPage={this.renderPage}
             getNextPage={this.getNextPage}
             getPrevPage={this.getPrevPage}
             getCurrentPage={this.getCurrentPage}
             clickBoard={this.clickBoard}
-            initialPage={this.bookInfo.recordPage - 1}
+            initialPage={this.currentBook.LastChapterReadPage - 1}
             locked={this.state.isVisible}
+            bodyComponents = {this.bodyComponents}
             Gpag={this.state.goFlag} />)}
         <Toast ref="toast" />
         {this.state.isVisible && <BottomNav
           screenProps={this.props.screenProps}
           navigation={this.props.navigation}
           chapterList={this.chapterList}
-          recordNum={this.bookInfo.recordNum}
-          bookName={this.currentBook.bookName}
+          recordNum={this.recordNum}
+          bookName={this.currentBook.BookName}
           getContent={this.getContent} />}
       </View>
     );

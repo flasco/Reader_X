@@ -100,7 +100,6 @@ class ReadScreen extends Component {
 
     const bookId = props.navigation.state.params.BookId;
     this.currentBook  = realm.objects('Shelf').filtered(`BookId = ${bookId}`)[0];
-    console.log(this.currentBook);
     this.totalPage = 1;
     this.chapterList;
     this.recordNum = 0;
@@ -123,7 +122,6 @@ class ReadScreen extends Component {
     this.getContent = this.getContent.bind(this);
     this.getMapAndLst = this.getMapAndLst.bind(this);
 
-
     this.getMapAndLst(bookId);
 
   }
@@ -139,31 +137,20 @@ class ReadScreen extends Component {
       }
     } else {
       const { data, err } = await chapterList(bookId);
-      // console.log(data);
       realm.write(() => {
         data.map(item => {
-          // console.log(item);
           realm.create('Chapter', {
             BookId: bookId,
             ChapterId:+item.chapterId,
             Title:item.title,
+            Content:null,
           });
         });
       });
       this.chapterList = realm.objects('Chapter').filtered(`BookId = ${bookId}`).sorted(['ChapterId']);
-      
     }
-    // console.log(chapterList);
 
     await this.fetchContent(this.chapterList[this.recordNum].ChapterId, 0);
-
-
-    // const [x, y, z] = await AsyncStorage.multiGet([bookMapTag, bookLstTag, bookRecordTag]);
-    // this.chapterContentMap = x[1] ? JSON.parse(x[1]) : new Map();
-    // this.chapterList = y[1] ? JSON.parse(y[1]) : [];
-    // this.bookRecord = z[1] ? JSON.parse(z[1]) : { recordNum: 0, recordPage: 1 };
-    // this.chapterList.length === 0 && await this.fetchChapterList(this.currentBook.BookId);
-    // this.chapterList.length !== 0 && await this.fetchContent(this.chapterList[this.bookRecord.recordNum].chapterId, 0);
 
   }
 
@@ -183,18 +170,21 @@ class ReadScreen extends Component {
 
     if (!data || data.length<1) {
       data = (await content(this.currentBook.BookId, chapterId)).data.content;
-      // console.log(this.chapterList[this.recordNum]);
-      // realm.write(()=>{   //buG所在
-      //   this.chapterList[this.recordNum].Content = data;
-      // })
-      // this.chapterList[this.recordNum].Content = data;
+      realm.write(()=>{
+        this.chapterList[this.recordNum].Content = data;
+        this.currentBook.LastChapter = this.chapterList[this.recordNum].Title;
+      });
+      
     }
     let arr = getContextArr(data, width, height, 23);//23 是字体大小
     this.totalPage = arr.length;
-    this.setState({
-      currentItem: arr,
-      goFlag: direct,
-      loadFlag: false,
+
+    requestAnimationFrame(() => {//修复与realm的冲突
+      this.setState({
+        currentItem: arr,
+        goFlag: direct,
+        loadFlag: false,
+      });
     });
   }
 
@@ -252,10 +242,7 @@ class ReadScreen extends Component {
     pag = pag === 0 ? 1 : pag;
     realm.write(()=>{
       this.currentBook.LastChapterReadPage = pag;
-    })
-    // this.currentBook.setLastChapterReadPage(pag);
-    // this.currentBook.recordPage = pag;
-    // await AsyncStorage.setItem(bookRecordTag, JSON.stringify(this.bookRecord));
+    });
   }
 
   clickBoard() {

@@ -1,7 +1,7 @@
 import React, { Component, PureComponent } from 'react';
 import { StyleSheet, Text, View, Dimensions, StatusBar, ActionSheetIOS, AsyncStorage, LayoutAnimation } from 'react-native';
 
-import { Icon ,Button } from 'react-native-elements';
+import { Icon, Button } from 'react-native-elements';
 import Toast from 'react-native-easy-toast';
 import dateFormat from 'dateformat';
 import { HeaderBackButton } from 'react-navigation';
@@ -12,34 +12,16 @@ import BottomNav from '../../components/BottomNav';
 
 import { content, chapterList } from '../../services/book';
 import realm, { SortDescriptor } from '../../models';
+import { mergeDeep } from '../../utils/object';
 
-import styles from './index.style';
+import styles, { containerColors } from './index.style';
 
-const width = styles.width;
-const height = styles.height;
+const width = styles.common.width;
+const height = styles.common.height;
 
 let tht;
 
-class ReadItem extends Component {
-  constructor(props) {
-    super(props);
-    this.date = dateFormat(new Date(), 'H:MM');
-  }
-  render() {
-    return (
-      <View style={[styles.SunnyModeContainer, styles.bookCont]}>
-        <Text style={[styles.title, styles.SunnyMode.Title]}>{this.props.title}</Text>
-        <Text style={[styles.textsize, styles.SunnyMode.Text]} numberOfLines={21}>{this.props.data}</Text>
-        <View style={styles.bottView}>
-          <Text style={styles.bottom1}>{this.date}</Text>
-          <Text style={styles.bottom2} >{this.props.page}/{this.props.totalPage} </Text>
-        </View>
-      </View>
-    );
-  }
-}
-
-class ReadScreen extends Component {
+class ReadScreen extends PureComponent {
   static navigationOptions = ({ navigation, screenProps }) => {
     let showHeader = navigation.state.params.showHeader ? {} : { header: null };
     return {
@@ -55,39 +37,39 @@ class ReadScreen extends Component {
         opacity: 0.75
       },
       ...showHeader,
-      headerLeft:(
+      headerLeft: (
         <HeaderBackButton
-        title='返回'
-        tintColor={'#fff'}
-        onPress={() => {
-          tht.refs.pager.clearcmp();
-          screenProps.router.goBack(navigation);
-        }}/>
+          title='返回'
+          tintColor={'#fff'}
+          onPress={() => {
+            tht.refs.pager.clearcmp();
+            screenProps.router.goBack(navigation);
+          }} />
       ),
       headerRight: (
-        <View style={styles.navRightContainer}>
+        <View style={styles.common.navRightContainer}>
           <Icon
-            containerStyle={styles.navButtonContainer}
+            containerStyle={styles.common.navButtonContainer}
             name='arrow-downward'
             type='MaterialIcons'
-            color={styles.navButton.color}
-            underlayColor={styles.navButton.underlayColor}
+            color={styles.common.navButton.color}
+            underlayColor={styles.common.navButton.underlayColor}
             onPress={() => { tht.downChoose(); }}
           />
           <Icon
-            containerStyle={styles.navButtonContainer}
+            containerStyle={styles.common.navButtonContainer}
             name='bubble-chart'//
             type='MaterialIcons'
-            color={styles.navButton.color}
-            underlayColor={styles.navButton.underlayColor}
+            color={styles.common.navButton.color}
+            underlayColor={styles.common.navButton.underlayColor}
             onPress={() => { }}
           />
           <Icon
-            containerStyle={styles.navButtonContainer}
+            containerStyle={styles.common.navButtonContainer}
             name='more-horiz'//bubble-chart
             type='MaterialIcons'
-            color={styles.navButton.color}
-            underlayColor={styles.navButton.underlayColor}
+            color={styles.common.navButton.color}
+            underlayColor={styles.common.navButton.underlayColor}
             onPress={() => { }}
           />
         </View>
@@ -99,16 +81,19 @@ class ReadScreen extends Component {
     super(props);
 
     const bookId = props.navigation.state.params.BookId;
-    this.currentBook  = realm.objects('Shelf').filtered(`BookId = ${bookId}`)[0];
+    this.currentBook = realm.objects('Shelf').filtered(`BookId = ${bookId}`)[0];
     this.totalPage = 1;
     this.chapterList;
     this.recordNum = 0;
+    this.backgroundColor = containerColors.zhuishuGreen;
+    this.isChange = 0;
 
     this.state = {
       loadFlag: true, //判断是出于加载状态还是显示状态
       currentItem: '', //作为章节内容的主要获取来源。
       isVisible: false, //判断导航栏是否应该隐藏
       goFlag: 0, //判断是前往上一章（-1）还是下一章（1）
+      sunnyMode: true,
     };
 
     tht = this;
@@ -121,12 +106,51 @@ class ReadScreen extends Component {
     this.downChoose = this.downChoose.bind(this);
     this.getContent = this.getContent.bind(this);
     this.getMapAndLst = this.getMapAndLst.bind(this);
+    this.modeChange = this.modeChange.bind(this);
+    this.changeBackGround = this.changeBackGround.bind(this);
 
     this.getMapAndLst(bookId);
 
   }
 
+  get styles() {
+    if (this.currentstyle) {
+      if (0 !== this.isChange) {
+        return this.currentstyle;
+      }
+      this.isChange = 0;
+    }
+
+    if (this.state.sunnyMode) {
+      const container = {
+        Container: {
+          flex: 1,
+          backgroundColor: this.backgroundColor,
+        }
+      };
+
+      return (this.currentstyle = mergeDeep({}, styles.common, styles.sunnyMode, container));
+    } else {
+      return (this.currentstyle = mergeDeep({}, styles.common, styles.moonMode));
+    }
+  }
+
+  //region
+
   async getMapAndLst(bookId) {
+    const backgroundColor = await AsyncStorage.getItem('backgroundColor');
+    if (backgroundColor !== null) {
+      this.backgroundColor = backgroundColor;
+    } else {
+      AsyncStorage.setItem('backgroundColor', this.backgroundColor);
+    }
+    const Mode = await AsyncStorage.getItem('sunnyMode');
+    if (Mode !== null) {
+      this.setState({
+        sunnyMode: JSON.parse(Mode)
+      })
+    }
+
     this.chapterList = realm.objects('Chapter').filtered(`BookId = ${bookId}`).sorted(['ChapterId']);
     if (this.chapterList && this.chapterList.length > 0) {
       for (let i = 0, j = this.chapterList.length; i < j; i++) { // 如果都不等，recordNum 默认等于0，从头开始。
@@ -141,9 +165,9 @@ class ReadScreen extends Component {
         data.map(item => {
           realm.create('Chapter', {
             BookId: bookId,
-            ChapterId:+item.chapterId,
-            Title:item.title,
-            Content:null,
+            ChapterId: +item.chapterId,
+            Title: item.title,
+            Content: null,
           });
         });
       });
@@ -154,27 +178,41 @@ class ReadScreen extends Component {
 
   }
 
-  renderPage(data, pageID) {
-    const title = this.chapterList[this.recordNum].Title;
-    return (
-      <ReadItem
-        data={data}
-        title={title}
-        totalPage={this.totalPage}
-        page={Number(pageID) + 1} />
-    );
+  async changeBackGround(index) {
+    switch (index) {
+      case 1:
+        this.backgroundColor = containerColors.zhuishuGreen;
+        break;
+      case 2:
+        this.backgroundColor = containerColors.qidianPink;
+        break;
+      case 3:
+        this.backgroundColor = containerColors.qidianRockYellow;
+        break;
+      case 4:
+        this.backgroundColor = containerColors.qidianwhite;
+        break;
+      case 5:
+        this.backgroundColor = containerColors.qidianX;
+        break;
+      case 6:
+        this.backgroundColor = containerColors.qidianY;
+        break;
+    }
+    await AsyncStorage.setItem('backgroundColor', this.backgroundColor);
+    this.forceUpdate();
   }
 
   async fetchContent(chapterId, direct) {
     let data = this.chapterList[this.recordNum].Content;
 
-    if (!data || data.length<1) {
+    if (!data || data.length < 1) {
       data = (await content(this.currentBook.BookId, chapterId)).data.content;
-      realm.write(()=>{
+      realm.write(() => {
         this.chapterList[this.recordNum].Content = data;
         this.currentBook.LastChapter = this.chapterList[this.recordNum].Title;
       });
-      
+
     }
     let arr = getContextArr(data, width, height, 23);//23 是字体大小
     this.totalPage = arr.length;
@@ -240,7 +278,7 @@ class ReadScreen extends Component {
 
   async getCurrentPage(pag) {
     pag = pag === 0 ? 1 : pag;
-    realm.write(()=>{
+    realm.write(() => {
       this.currentBook.LastChapterReadPage = pag;
     });
   }
@@ -267,17 +305,40 @@ class ReadScreen extends Component {
     this.setState({ isVisible: !flag });
   }
 
+  modeChange() {
+    const flag = this.state.sunnyMode;
+    this.setState({
+      sunnyMode: !flag,
+    });
+    AsyncStorage.setItem('sunnyMode', JSON.stringify(!flag));
+  }
+  //endregion
+
+  renderPage(data, pageID) {
+    const title = this.chapterList[this.recordNum].Title;
+    const date = dateFormat(new Date(), 'H:MM');
+    return (
+      <View style={[this.styles.Container, this.styles.bookCont]}>
+        <Text style={[this.styles.title, this.styles.TitleColor]}>{title}</Text>
+        <Text style={[this.styles.textsize, this.styles.TextColor]} numberOfLines={21}>{data}</Text>
+        <View style={this.styles.bottView}>
+          <Text style={[this.styles.bottom1, this.styles.BottomColor]}>{date}</Text>
+          <Text style={[this.styles.bottom2, this.styles.BottomColor]} >{Number(pageID) + 1}/{this.totalPage} </Text>
+        </View>
+      </View>
+    );
+  }
 
   render() {
     const ViewDs = new ViewPager.DataSource({ pageHasChanged: (p1, p2) => p1 !== p2 });
     return (
-      <View style={styles.SunnyModeContainer}>
+      <View style={this.styles.Container}>
         <StatusBar
           barStyle={'light-content'}
           hidden={!this.state.isVisible}
           animation={true} />
         {this.state.loadFlag ? (
-          <Text style={styles.centr}>
+          <Text style={[this.styles.centr, this.styles.TextColor]}>
             Loading...</Text>) :
           (<ViewPager
             ref={'pager'}
@@ -289,7 +350,7 @@ class ReadScreen extends Component {
             clickBoard={this.clickBoard}
             initialPage={this.currentBook.LastChapterReadPage - 1}
             locked={this.state.isVisible}
-            bodyComponents = {this.bodyComponents}
+            bodyComponents={this.bodyComponents}
             Gpag={this.state.goFlag} />)}
         <Toast ref="toast" />
         {this.state.isVisible && <BottomNav
@@ -297,6 +358,8 @@ class ReadScreen extends Component {
           navigation={this.props.navigation}
           chapterList={this.chapterList}
           recordNum={this.recordNum}
+          changeBackGround={this.changeBackGround}
+          modeChange={this.modeChange}
           bookName={this.currentBook.BookName}
           getContent={this.getContent} />}
       </View>

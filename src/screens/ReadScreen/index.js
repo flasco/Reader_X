@@ -5,6 +5,7 @@ import { Icon, Button } from 'react-native-elements';
 import Toast from 'react-native-easy-toast';
 import dateFormat from 'dateformat';
 import { HeaderBackButton } from 'react-navigation';
+import async from 'async';
 
 import ViewPager from '../../components/ViewPager';
 import getContextArr from '../../utils/getContextArr';
@@ -20,6 +21,32 @@ const width = styles.common.width;
 const height = styles.common.height;
 
 let tht;
+
+let q = async.queue(function (num, callback) {
+  loadX(num, () => {
+    callback(null);
+  })
+}, 5);
+
+q.drain = function () {
+  tht.refs.toast.show(`Task finished process:${successTask}/${allTask}`);
+  successTask = 0;
+};
+
+async function loadX(num, callback) {
+  try {
+    await tht.cacheLoad(num);
+    successTask++;
+  } catch (err) {
+
+  } finally {
+    callback()
+  }
+};
+
+let allTask = 0, successTask = 0;
+
+
 
 class ReadScreen extends PureComponent {
   static navigationOptions = ({ navigation, screenProps }) => {
@@ -108,6 +135,8 @@ class ReadScreen extends PureComponent {
     this.getMapAndLst = this.getMapAndLst.bind(this);
     this.modeChange = this.modeChange.bind(this);
     this.changeBackGround = this.changeBackGround.bind(this);
+    this.cacheLoad = this.cacheLoad.bind(this);
+    this.download_Chapter = this.download_Chapter.bind(this);
 
     this.getMapAndLst(bookId);
 
@@ -175,7 +204,7 @@ class ReadScreen extends PureComponent {
     }
 
     await this.fetchContent(this.chapterList[this.recordNum].ChapterId, 0);
-
+    this.cacheLoad(this.recordNum + 1);
   }
 
   async changeBackGround(index) {
@@ -201,6 +230,19 @@ class ReadScreen extends PureComponent {
     }
     await AsyncStorage.setItem('backgroundColor', this.backgroundColor);
     this.forceUpdate();
+  }
+
+  async cacheLoad(num) {
+    let data = this.chapterList[num].Content;
+    if (!data || data.length < 1) {
+      // this.refs.toast.show('开始预缓存');
+      data = (await content(this.currentBook.BookId, this.chapterList[num].ChapterId)).data.content;
+      realm.write(() => {
+        this.chapterList[num].Content = data;
+      });
+    } else {
+      // this.refs.toast.show(`下章[ ${num} ]已经有缓存了！`);
+    }
   }
 
   async fetchContent(chapterId, direct) {
@@ -235,6 +277,16 @@ class ReadScreen extends PureComponent {
     });
   }
 
+  download_Chapter(num) {
+    let length = this.chapterList.length;
+    const wantNum = this.recordNum + num;
+    let end = wantNum > length ? length : wantNum;
+    allTask = end - this.recordNum - 1;
+    for (let i = this.recordNum + 1; i < end; i++) {
+      q.push(i);
+    }
+  }
+
   downChoose() {
     ActionSheetIOS.showActionSheetWithOptions({
       options: ['缓存50章', '缓存150章', 'Cancel',],
@@ -243,11 +295,11 @@ class ReadScreen extends PureComponent {
       (buttonIndex) => {
         switch (buttonIndex) {
           case 0: {//50章
-            // this.download_Chapter(50);
+            this.download_Chapter(50);
             break;
           }
           case 1: {//150章
-            // this.download_Chapter(150);
+            this.download_Chapter(150);
             break;
           }
         }
@@ -260,6 +312,9 @@ class ReadScreen extends PureComponent {
       return;
     }
     const chapterId = this.chapterList[++this.recordNum].ChapterId;
+
+    this.cacheLoad(this.recordNum + 1);
+
     this.setState({ loadFlag: true }, () => {
       this.fetchContent(chapterId, 1);
     });

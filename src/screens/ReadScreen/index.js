@@ -89,7 +89,7 @@ class ReadScreen extends PureComponent {
             type='MaterialIcons'
             color={styles.common.navButton.color}
             underlayColor={styles.common.navButton.underlayColor}
-            onPress={() => { }}
+            onPress={() => { tht.sourceChoose(); }}
           />
           <Icon
             containerStyle={styles.common.navButtonContainer}
@@ -115,6 +115,8 @@ class ReadScreen extends PureComponent {
     this.backgroundColor = containerColors.zhuishuGreen;
     this.isChange = 0;
 
+    this.sourceselect = 'bqg';
+
     this.state = {
       loadFlag: true, //判断是出于加载状态还是显示状态
       currentItem: '', //作为章节内容的主要获取来源。
@@ -137,6 +139,7 @@ class ReadScreen extends PureComponent {
     this.changeBackGround = this.changeBackGround.bind(this);
     this.cacheLoad = this.cacheLoad.bind(this);
     this.download_Chapter = this.download_Chapter.bind(this);
+    this.sourceChoose = this.sourceChoose.bind(this);
 
     this.getMapAndLst(bookId);
 
@@ -168,6 +171,11 @@ class ReadScreen extends PureComponent {
 
   async getMapAndLst(bookId) {
     const backgroundColor = await AsyncStorage.getItem('backgroundColor');
+    this.sourceselect = await AsyncStorage.getItem('sourceselect');
+    if(this.sourceselect === null) {
+      this.sourceselect = 'bqg';
+      await AsyncStorage.setItem('sourceselect',this.sourceselect);
+    }
     if (backgroundColor !== null) {
       this.backgroundColor = backgroundColor;
     } else {
@@ -249,7 +257,7 @@ class ReadScreen extends PureComponent {
     let data = this.chapterList[this.recordNum].Content;
 
     if (!data || data.length < 1) {
-      data = (await content(this.currentBook.BookId, chapterId)).data.content;
+      data = (await content(this.currentBook.BookId, chapterId,this.sourceselect)).data.content;
       realm.write(() => {
         this.chapterList[this.recordNum].Content = data;
         this.currentBook.LastChapter = this.chapterList[this.recordNum].Title;
@@ -303,6 +311,28 @@ class ReadScreen extends PureComponent {
             break;
           }
         }
+      });
+  }
+
+
+
+  sourceChoose() {
+    ActionSheetIOS.showActionSheetWithOptions({
+      options: ['笔趣阁', '一百度', 'Cancel',],
+      cancelButtonIndex: 2,
+    },
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0: {//50章
+            this.sourceselect = 'bqg';
+            break;
+          }
+          case 1: {//150章
+            this.sourceselect = 'ybdu';
+            break;
+          }
+        }
+        AsyncStorage.setItem('sourceselect',this.sourceselect);
       });
   }
 

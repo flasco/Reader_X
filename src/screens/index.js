@@ -21,6 +21,7 @@ import BookForum from './BookForum';
 import ReadScreen from './ReadScreen';
 import CatalogScreen from './CatalogScreen';
 import SearchScreen from'./SearchScreen';
+import SourceChangeScreen from './SourceChangeScreen';
 
 import { theme } from '../theme';
 
@@ -78,6 +79,9 @@ const BookNavigator = StackNavigator({
   Catalog: {
     screen: CatalogScreen,
   },
+  SourceChange: {
+    screen: SourceChangeScreen,
+  }
 }, {
   headerMode: 'screen',
   navigationOptions: options,

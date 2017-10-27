@@ -48,6 +48,13 @@ class ShelfScreen extends Component {
           />
         </View>
       ),
+      tabBarIcon: ({ tintColor }) => (
+        <Icon
+          name='list'
+          type='entypo'
+          color={tintColor}
+        />
+      ),
       tabBarLabel: '书架',
     };
   };
@@ -139,7 +146,7 @@ class ShelfScreen extends Component {
           onItemClicked={(item) => {
             // console.log(item);
             let BookId = item.BookId;
-            this.props.screenProps.router.navigate(this.props.navigation, 'Book', {BookId:BookId}, NavigationActions.navigate({ routeName: 'Read', params: {BookId:BookId} }));
+            this.props.screenProps.router.navigate(this.props.navigation, 'Book', { BookId: BookId }, NavigationActions.navigate({ routeName: 'Read', params: { BookId: BookId } }));
           }}
           keyExtractor={(item, index) => item.BookId}
         />

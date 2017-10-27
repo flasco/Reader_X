@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Text } from 'react-native';
 
 import { NavigationActions } from 'react-navigation';
+import { Icon } from 'react-native-elements';
 
 import Page from '../../components/Page';
 import BookList, { BookListType } from '../../components/BookList';
@@ -14,6 +15,16 @@ class RecommandScreen extends Component {
     let toEnd = true;
     return {
       title: '推荐',
+      tabBarLabel: '推荐',
+      tabBarIcon: ({ tintColor }) => (
+        <Icon
+
+          name='colours'
+          type='entypo'
+          color={tintColor}
+
+        />
+      ),
     };
   }
   constructor(props) {

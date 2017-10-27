@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text } from 'react-native';
 
 import { NavigationActions } from 'react-navigation';
-
+import { Icon } from 'react-native-elements';
 
 import Page from '../../components/Page';
 import { RefreshState } from '../../components/RefreshFlatList';
@@ -14,7 +14,15 @@ class RankingScreen extends Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     let toEnd = true;
     return {
-      title: '排行',
+      title: '起点排行',
+      tabBarLabel: '排行',
+      tabBarIcon: ({ tintColor }) => (
+        <Icon
+          name='layers'
+          type='entypo'
+          color={tintColor}
+        />
+      ),
     };
   }
   constructor(props) {

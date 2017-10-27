@@ -101,7 +101,6 @@ class BookList extends Component {
   }
 
   renderSimpleInfo(item) {
-    // console.log(item);
     return (
       <View style={this.styles.item.info.container}>
         <View style={this.styles.item.info.text.container}>

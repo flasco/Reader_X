@@ -48,7 +48,6 @@ class Page extends Component {
       return (
         <EmptyView
           tip="loading..."
-          // icon={require('../../assets/loading.gif')}
           iconStyle={styles.loading.image}
         />
       );

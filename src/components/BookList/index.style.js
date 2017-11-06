@@ -23,6 +23,8 @@ export default {
     list: {
       container: {
         flex: 1,
+        marginTop: 0,
+        borderTopWidth: 0,
       },
     },
     divider: {

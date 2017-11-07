@@ -185,7 +185,7 @@ class BookList extends Component {
 
   render() {
     return (
-      <List style={this.styles.list.container}>
+      <List containerStyle={this.styles.list.container}>
         <RefreshFlatList
           {...this.props}
           data={this.state.booklist}
